@@ -1,0 +1,49 @@
+# Server
+server:
+  ip: 127.0.0.1
+  port: 9681
+  tomcat:
+    remoteip:
+      host-header: X-Real-IP
+      protocol-header: X-Forwarded-Proto
+# Spring
+spring:
+  application:
+    name: ice-thirdpart-exercise-server
+  datasource:
+    url: jdbc:mysql://192.168.245.4:3306/ice-thirdpart-exercise?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 600000
+      connection-timeout: 30000
+      max-lifetime: 1800000
+  redis:
+    host: 192.168.245.4
+    port: 6379
+    password:
+    database: 0
+    jedis.pool:
+      max-active: 8
+      max-wait: -1
+      max-idle: 8
+      min-idle: 0
+    timeout: 5000
+  jackson:
+    default-property-inclusion: non_null
+    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
+    time-zone: GMT+8
+# Mybatis plus
+mybatis-plus:
+  configuration:
+    jdbc-type-for-null: null
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+    db-config:
+      logic-delete-value: true
+      logic-not-delete-value: false
+      update-strategy: ignored # 使得 update 时 null 值能被写入
