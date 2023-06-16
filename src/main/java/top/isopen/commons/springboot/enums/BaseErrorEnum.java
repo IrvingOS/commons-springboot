@@ -4,11 +4,14 @@ import top.isopen.commons.springboot.exception.BaseException;
 
 public enum BaseErrorEnum {
 
-    INVALID_PAGE_CURRENT_ERROR(1, "invalid_page_current", HttpStatusEnum.BAD_REQUEST),
-    INVALID_PAGE_SIZE_ERROR(2, "invalid_page_size", HttpStatusEnum.BAD_REQUEST),
-    INVALID_ORDER_BY_COLUMN_ERROR(3, "invalid_order_by_column", HttpStatusEnum.BAD_REQUEST),
+    INVALID_PAGE_CURRENT_ERROR(1, "invalid page current", HttpStatusEnum.BAD_REQUEST),
+    INVALID_PAGE_SIZE_ERROR(2, "invalid page size", HttpStatusEnum.BAD_REQUEST),
+    INVALID_ORDER_BY_COLUMN_ERROR(3, "invalid order by column", HttpStatusEnum.BAD_REQUEST),
 
-    INVALID_PRIMARY_ID_ERROR(501, "invalid_model_primary_id", HttpStatusEnum.INTERNAL_SERVER_ERROR),
+    INVALID_PRIMARY_ID_ERROR(501, "invalid model primary id", HttpStatusEnum.INTERNAL_SERVER_ERROR),
+    INVALID_APPLICATION_CONTEXT_ERROR(502, "invalid application context", HttpStatusEnum.INTERNAL_SERVER_ERROR),
+    INVALID_REDIS_RESULT_ERROR(503, "invalid redis result", HttpStatusEnum.INTERNAL_SERVER_ERROR),
+
     ;
 
     private final int code;
