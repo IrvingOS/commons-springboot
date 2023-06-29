@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>commons-springboot</artifactId>
     <groupId>top.isopen.commons</groupId>
-    <version>0.1.0</version>
+    <version>1.0.0</version>
 
     <name>commons-springboot</name>
     <description>集成常用 Springboot 基础设施</description>
@@ -53,6 +53,14 @@
     </licenses>
 
     <dependencies>
+        <!-- Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>2.7.4</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- Mybatis-plus -->
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -61,11 +69,35 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- Mybatis-plus -->
+        <!-- Mysql Connector -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.30</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
             <version>2.7.4</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Redisson -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+            <version>3.22.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Aspectj -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.9.19</version>
             <scope>compile</scope>
         </dependency>
 
@@ -91,35 +123,6 @@
             <artifactId>fastjson</artifactId>
             <version>2.0.25</version>
             <scope>compile</scope>
-        </dependency>
-
-        <!-- TEST -->
-
-        <!-- Junit -->
-        <!-- Mysql Connector -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.30</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>2.7.4</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <version>2.7.4</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -165,6 +168,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.9.1</version>
+                <configuration>
+                    <!-- 解决 javadoc 编译报错的问题 -->
+                    <additionalJOption>-Xdoclint:none</additionalJOption>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>

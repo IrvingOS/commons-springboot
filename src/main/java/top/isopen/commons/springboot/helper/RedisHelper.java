@@ -109,7 +109,7 @@ public class RedisHelper {
          *
          * @param key        value 对应的 key
          * @param value      要反序列的 value 值。
-         *                   注：这个值可以由 {@link this#dump(String)} 获得
+         *                   注：这个值可以由 {@link KeyOps#dump(String)} 获得
          * @param timeToLive 反序列化后的 key-value 的存活时长
          * @param unit       timeToLive 的单位
          * @throws RedisSystemException 如果 redis 中已存在同样的 key 时，抛出此异常
@@ -124,7 +124,7 @@ public class RedisHelper {
          *
          * @param key        value 对应的 key
          * @param value      要反序列的 value 值。
-         *                   注：这个值可以由 {@link this#dump(String)} 获得
+         *                   注：这个值可以由 {@link KeyOps#dump(String)} 获得
          * @param timeToLive 反序列化后的 key-value 的存活时长
          * @param unit       timeToLive 的单位
          * @param replace    若 redis 中已经存在了相同的 key, 是否替代原来的 key-value
@@ -733,7 +733,7 @@ public class RedisHelper {
     /**
      * hash 相关操作
      * <p>
-     * 提示：简单的，可以将 redis 中 hash 的数据结构看作是 Map<String, Map<HK, HV>>
+     * 提示：简单的，可以将 redis 中 hash 的数据结构看作是 Map<String, Map<HK, HV> >
      *
      * @author JustryDeng
      * @since 2020/3/8 23:39:26
@@ -988,7 +988,6 @@ public class RedisHelper {
 
         /**
          * 根据options匹配到(key对应的)hash中的对应的entryKey, 并返回对应的entry集
-         * <p>
          * <p>
          * 注: ScanOptions实例的创建方式举例:
          * 1、ScanOptions.NONE

@@ -12,15 +12,3 @@
 ```
 
 ## 2. TODO
-
-### 2.1. RedisHelper
-
-### 2.2. RedisLockAnnotation
-
-1. 注解式
-2. 锁续约
-3. 主从分布式锁 与 cluster 分布式锁
-4. 可重入性
-
-### 2.3. LogAnnotation
-

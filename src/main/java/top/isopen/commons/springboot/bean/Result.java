@@ -2,7 +2,7 @@ package top.isopen.commons.springboot.bean;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import top.isopen.commons.springboot.enums.HttpStatusEnum;
+import org.springframework.http.HttpStatus;
 
 /**
  * 序列化依赖 getter 函数，不依赖构造函数
@@ -52,8 +52,8 @@ public class Result<T> extends BaseResponse {
 
     public static <T> Result<T> error() {
         Result<T> result = new Result<>();
-        result.setCode(HttpStatusEnum.INTERNAL_SERVER_ERROR.value());
-        result.setMessage(HttpStatusEnum.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        result.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        result.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
         return result;
     }
 

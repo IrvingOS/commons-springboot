@@ -2,7 +2,7 @@ package top.isopen.commons.springboot.exception;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import top.isopen.commons.springboot.enums.HttpStatusEnum;
+import org.springframework.http.HttpStatus;
 
 /**
  * @author TimeChaser
@@ -17,7 +17,7 @@ public class BaseException extends RuntimeException {
 
     private int code;
     private String message;
-    private HttpStatusEnum httpStatus;
+    private HttpStatus httpStatus;
 
     protected BaseException() {
         super();
@@ -30,10 +30,10 @@ public class BaseException extends RuntimeException {
     public BaseException(int code, String message) {
         this.code = code;
         this.message = message;
-        this.httpStatus = HttpStatusEnum.BAD_REQUEST;
+        this.httpStatus = HttpStatus.BAD_REQUEST;
     }
 
-    public BaseException(int code, String message, HttpStatusEnum httpStatus) {
+    public BaseException(int code, String message, HttpStatus httpStatus) {
         this.code = code;
         this.message = message;
         this.httpStatus = httpStatus;
