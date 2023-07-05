@@ -15,6 +15,10 @@ public class ApplicationContextHelper implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
 
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
     @Override
     public void setApplicationContext(@Nullable ApplicationContext applicationContext) throws BeansException {
         if (applicationContext == null) {

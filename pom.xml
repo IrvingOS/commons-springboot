@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>commons-springboot</artifactId>
     <groupId>top.isopen.commons</groupId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 
     <name>commons-springboot</name>
     <description>集成常用 Springboot 基础设施</description>
@@ -123,6 +123,13 @@
             <artifactId>fastjson</artifactId>
             <version>2.0.25</version>
             <scope>compile</scope>
+        </dependency>
+
+        <!-- Shiro -->
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+            <version>1.10.0</version>
         </dependency>
     </dependencies>
 

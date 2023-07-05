@@ -1,2 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  top.isopen.commons.springboot.config.BaseConfig
+  top.isopen.commons.springboot.config.BaseConfig,\
+  top.isopen.commons.springboot.config.RedisConfig,\
+  top.isopen.commons.springboot.config.MybatisPlusConfig

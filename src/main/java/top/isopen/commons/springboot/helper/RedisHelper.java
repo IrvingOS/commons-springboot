@@ -618,7 +618,7 @@ public class RedisHelper {
         /**
          * 追加值到末尾
          * <p>
-         * 注: 当 redis 中原本不存在 key 时，那么（从效果上来看）此方法就等价于 {@link this#set(String, String)}
+         * 注: 当 redis 中原本不存在 key 时，那么（从效果上来看）此方法就等价于 {@link StringOps#set(String, String)}
          *
          * @param key   定位 value 的 key
          * @param value 要追加的 value 值
@@ -2655,19 +2655,17 @@ public class RedisHelper {
     public static class LockOps {
 
         /**
-         * lua 脚本, 保证 释放锁脚本 的原子性（以避免, 并发场景下, 释放了别人的锁）
-         */
-        private static final String RELEASE_LOCK_LUA;
-
-        /**
          * 分布式锁默认（最大）存活时长
          */
         public static final long DEFAULT_LOCK_TIMEOUT = 3;
-
         /**
          * DEFAULT_LOCK_TIMEOUT的单位
          */
         public static final TimeUnit DEFAULT_TIMEOUT_UNIT = TimeUnit.SECONDS;
+        /**
+         * lua 脚本, 保证 释放锁脚本 的原子性（以避免, 并发场景下, 释放了别人的锁）
+         */
+        private static final String RELEASE_LOCK_LUA;
 
         static {
             // 不论 lua 中 0 是否代表失败; 对于 java 的 Boolean 而言, 返回 0, 则会被解析为 false

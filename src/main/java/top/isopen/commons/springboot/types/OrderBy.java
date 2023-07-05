@@ -4,7 +4,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 import lombok.experimental.SuperBuilder;
+import top.isopen.commons.springboot.bean.OrderByRequest;
 import top.isopen.commons.springboot.enums.BaseErrorEnum;
+import top.isopen.commons.springboot.model.AbstractModel;
 import top.isopen.commons.springboot.support.SFunction;
 import top.isopen.commons.springboot.util.FieldUtil;
 import top.isopen.commons.springboot.util.NameUtil;
@@ -14,12 +16,45 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
-public class OrderBy implements Serializable {
+public class OrderBy<T extends AbstractModel<T, ?>> implements Serializable {
 
     private static final long serialVersionUID = 2006033976690108451L;
 
     private Column column;
     private boolean asc;
+
+    public OrderBy(String column, boolean asc) {
+        this.column = new Column(column);
+        this.asc = asc;
+    }
+
+    public static <T extends AbstractModel<T, ?>> OrderBy<T> resolve(OrderByRequest orderByRequest) {
+        return OrderBy.<T>builder().column(new Column(orderByRequest.getColumn())).asc(orderByRequest.isAsc()).build();
+    }
+
+    public OrderBy<T> asc(String column) {
+        this.column = new Column(column);
+        this.asc = true;
+        return this;
+    }
+
+    public OrderBy<T> asc(SFunction<T, ?> func) {
+        this.column = new Column(FieldUtil.resolveName(func));
+        this.asc = true;
+        return this;
+    }
+
+    public OrderBy<T> desc(String column) {
+        this.column = new Column(column);
+        this.asc = false;
+        return this;
+    }
+
+    public OrderBy<T> desc(SFunction<T, ?> func) {
+        this.column = new Column(FieldUtil.resolveName(func));
+        this.asc = false;
+        return this;
+    }
 
     @Value
     public static class Column {
@@ -33,22 +68,6 @@ public class OrderBy implements Serializable {
             this.value = NameUtil.humpToUnderline(value);
         }
 
-    }
-
-    public static OrderBy asc(String column) {
-        return OrderBy.builder().column(new Column(column)).asc(true).build();
-    }
-
-    public static <T> OrderBy asc(SFunction<T, ?> func) {
-        return OrderBy.builder().column(new Column(FieldUtil.resolveName(func))).asc(true).build();
-    }
-
-    public static OrderBy desc(String column) {
-        return OrderBy.builder().column(new Column(column)).asc(false).build();
-    }
-
-    public static <T> OrderBy desc(SFunction<T, ?> func) {
-        return OrderBy.builder().column(new Column(FieldUtil.resolveName(func))).asc(false).build();
     }
 
 }

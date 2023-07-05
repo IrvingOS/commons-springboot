@@ -1,4 +1,4 @@
-package top.isopen.commons.springboot.test;
+package top.isopen.commons.springboot.test.types;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

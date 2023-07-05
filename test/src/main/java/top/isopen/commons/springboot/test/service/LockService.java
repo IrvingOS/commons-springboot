@@ -1,11 +1,12 @@
-package top.isopen.commons.springboot.test;
+package top.isopen.commons.springboot.test.service;
 
 import org.springframework.stereotype.Service;
 import top.isopen.commons.springboot.lock.annotation.RedLock;
 import top.isopen.commons.springboot.lock.annotation.RedLocks;
+import top.isopen.commons.springboot.test.types.User;
 
 @Service
-public class ServiceComponent {
+public class LockService {
 
     @RedLock(key = "key:#lock")
     public void lock(String lock) {
