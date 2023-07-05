@@ -23,15 +23,15 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("unused")
 public class RedisHelper {
 
-    private static final Log log = LogFactory.getLog(RedisHelper.class);
+    private final Log log = LogFactory.getLog(RedisHelper.class);
 
     /**
      * 使用 StringRedisTemplate（其是 RedisTemplate 的定制化升级）
      */
-    private static StringRedisTemplate redisTemplate;
+    private final StringRedisTemplate redisTemplate;
 
     public RedisHelper(StringRedisTemplate redisTemplate) {
-        RedisHelper.redisTemplate = redisTemplate;
+        this.redisTemplate = redisTemplate;
     }
 
     /**
@@ -40,7 +40,7 @@ public class RedisHelper {
      * @author JustryDeng
      * @since 2020/3/7 16:54:25
      */
-    public static class KeyOps {
+    public class KeyOps {
 
         /**
          * 根据 key, 删除 redis 中的对应 key-value
@@ -55,7 +55,7 @@ public class RedisHelper {
          * @return 删除是否成功
          * @since 2020/3/7 17:15:02
          */
-        public static boolean delete(String key) {
+        public boolean delete(String key) {
             log.info("delete(...) => key -> {}", key);
             Boolean result = redisTemplate.delete(key);
             log.info("delete(...) => result -> {}", result);
@@ -76,7 +76,7 @@ public class RedisHelper {
          * @return 删除了的 key-value 个数
          * @since 2020/3/7 17:48:04
          */
-        public static long delete(Collection<String> keys) {
+        public long delete(Collection<String> keys) {
             log.info("delete(...) => keys -> {}", keys);
             Long count = redisTemplate.delete(keys);
             log.info("delete(...) => count -> {}", count);
@@ -97,7 +97,7 @@ public class RedisHelper {
          * @return 序列化后的 value 值
          * @since 2020/3/8 11:34:13
          */
-        public static byte[] dump(String key) {
+        public byte[] dump(String key) {
             log.info("dump(...) =>key -> {}", key);
             byte[] result = redisTemplate.dump(key);
             log.info("dump(...) => result -> {}", Arrays.toString(result));
@@ -115,7 +115,7 @@ public class RedisHelper {
          * @throws RedisSystemException 如果 redis 中已存在同样的 key 时，抛出此异常
          * @since 2020/3/8 11:36:45
          */
-        public static void restore(String key, byte[] value, long timeToLive, TimeUnit unit) {
+        public void restore(String key, byte[] value, long timeToLive, TimeUnit unit) {
             restore(key, value, timeToLive, unit, false);
         }
 
@@ -131,7 +131,7 @@ public class RedisHelper {
          * @throws RedisSystemException 如果 redis 中已存在同样的key, 且 replace 为 false 时，抛出此异常
          * @since 2020/3/8 11:36:45
          */
-        public static void restore(String key, byte[] value, long timeToLive, TimeUnit unit, boolean replace) {
+        public void restore(String key, byte[] value, long timeToLive, TimeUnit unit, boolean replace) {
             log.info("restore(...) => key -> {}, value -> {}, timeToLive -> {}, unit -> {}, replace -> {}", key, value, timeToLive, unit, replace);
             redisTemplate.restore(key, value, timeToLive, unit, replace);
         }
@@ -143,7 +143,7 @@ public class RedisHelper {
          * @return 是否存在对应的 key-value
          * @since 2020/3/8 12:16:46
          */
-        public static boolean hasKey(String key) {
+        public boolean hasKey(String key) {
             log.info("hasKey(...) => key -> {}", key);
             Boolean result = redisTemplate.hasKey(key);
             log.info("hasKey(...) => result -> {}", result);
@@ -165,7 +165,7 @@ public class RedisHelper {
          * @return 操作是否成功
          * @since 2020/3/8 12:18:58
          */
-        public static boolean expire(String key, long timeToLive, TimeUnit unit) {
+        public boolean expire(String key, long timeToLive, TimeUnit unit) {
             log.info("expire(...) => key -> {}, timeToLive -> {}, unit -> {}", key, timeToLive, unit);
             Boolean result = redisTemplate.expire(key, timeToLive, unit);
             log.info("expire(...) => result -> {}", result);
@@ -186,7 +186,7 @@ public class RedisHelper {
          * @return 操作是否成功
          * @since 2020/3/8 12:19:29
          */
-        public static boolean expireAt(String key, Date date) {
+        public boolean expireAt(String key, Date date) {
             log.info("expireAt(...) => key -> {}, date -> {}", key, date);
             Boolean result = redisTemplate.expireAt(key, date);
             log.info("expireAt(...) => result -> {}", result);
@@ -208,7 +208,7 @@ public class RedisHelper {
          * @return 匹配 pattern 的 key 的集合。 可能为 null。
          * @since 2020/3/8 12:38:38
          */
-        public static Set<String> keys(String pattern) {
+        public Set<String> keys(String pattern) {
             log.info("keys(...) => pattern -> {}", pattern);
             Set<String> keys = redisTemplate.keys(pattern);
             log.info("keys(...) => keys -> {}", keys);
@@ -228,7 +228,7 @@ public class RedisHelper {
          * 注：若目标 db 下，已存在相同的 key, 那么 move 会失败，返回 false。
          * @since 2020/3/8 13:01:00
          */
-        public static boolean move(String key, int dbIndex) {
+        public boolean move(String key, int dbIndex) {
             log.info("move(...) => key  -> {}, dbIndex -> {}", key, dbIndex);
             Boolean result = redisTemplate.move(key, dbIndex);
             log.info("move(...) => result -> {}", result);
@@ -248,7 +248,7 @@ public class RedisHelper {
          * @return 操作是否成功
          * @since 2020/3/8 13:10:02
          */
-        public static boolean persist(String key) {
+        public boolean persist(String key) {
             log.info("persist(...) => key -> {}", key);
             Boolean result = redisTemplate.persist(key);
             log.info("persist(...) => result -> {}", result);
@@ -269,7 +269,7 @@ public class RedisHelper {
          * @return 过期时间（单位s）
          * @since 2020/3/8 13:17:35
          */
-        public static long getExpire(String key) {
+        public long getExpire(String key) {
             return getExpire(key, TimeUnit.SECONDS);
         }
 
@@ -284,7 +284,7 @@ public class RedisHelper {
          * @return 过期时间（单位 unit）
          * @since 2020/3/8 13:17:35
          */
-        public static long getExpire(String key, TimeUnit unit) {
+        public long getExpire(String key, TimeUnit unit) {
             log.info("getExpire(...) =>key -> {}, unit is -> {}", key, unit);
             Long result = redisTemplate.getExpire(key, unit);
             log.info("getExpire(...) => result ->  {}", result);
@@ -302,7 +302,7 @@ public class RedisHelper {
          * @return 随机获取到的一个 key
          * @since 2020/3/8 14:11:43
          */
-        public static String randomKey() {
+        public String randomKey() {
             String result = redisTemplate.randomKey();
             log.info("randomKey(...) => result -> {}", result);
             return result;
@@ -323,7 +323,7 @@ public class RedisHelper {
          * @throws RedisSystemException 若 oldKey 不存在时， 抛出此异常
          * @since 2020/3/8 14:14:17
          */
-        public static void rename(String oldKey, String newKey) {
+        public void rename(String oldKey, String newKey) {
             log.info("rename(...) => oldKey -> {}, newKey -> {}", oldKey, newKey);
             redisTemplate.rename(oldKey, newKey);
         }
@@ -339,7 +339,7 @@ public class RedisHelper {
          * @throws RedisSystemException 若 oldKey 不存在时， 抛出此异常
          * @since 2020/3/8 14:14:17
          */
-        public static boolean renameIfAbsent(String oldKey, String newKey) {
+        public boolean renameIfAbsent(String oldKey, String newKey) {
             log.info("renameIfAbsent(...) => oldKey -> {}, newKey -> {}", oldKey, newKey);
             Boolean result = redisTemplate.renameIfAbsent(oldKey, newKey);
             log.info("renameIfAbsent(...) => result -> {}", result);
@@ -358,7 +358,7 @@ public class RedisHelper {
          * @return key 对应的 value 的数据类型的枚举
          * @since 2020/3/8 14:40:16
          */
-        public static DataType type(String key) {
+        public DataType type(String key) {
             log.info("type(...) => key -> {}", key);
             DataType result = redisTemplate.type(key);
             log.info("type(...) => result -> {}", result);
@@ -373,7 +373,7 @@ public class RedisHelper {
      * @author JustryDeng
      * @since 2020/3/7 16:54:25
      */
-    public static class StringOps {
+    public class StringOps {
 
         /**
          * 设置 key-value
@@ -384,7 +384,7 @@ public class RedisHelper {
          * @param value key 对应的 value
          * @since 2020/3/8 15:40:59
          */
-        public static void set(String key, String value) {
+        public void set(String key, String value) {
             log.info("set(...) => key -> {}, value -> {}", key, value);
             redisTemplate.opsForValue().set(key, value);
         }
@@ -409,7 +409,7 @@ public class RedisHelper {
          * @return set 是否成功
          * @since 2020/3/8 16:30:37
          */
-        public static boolean setBit(String key, long offset, boolean value) {
+        public boolean setBit(String key, long offset, boolean value) {
             log.info("setBit(...) => key -> {}, offset -> {}, value -> {}", key, offset, value);
             Boolean result = redisTemplate.opsForValue().setBit(key, offset, value);
             log.info("setBit(...) => result -> {}", result);
@@ -432,7 +432,7 @@ public class RedisHelper {
          * @param unit       timeToLive 的单位
          * @since 2020/3/8 15:40:59
          */
-        public static void setEx(String key, String value, long timeToLive, TimeUnit unit) {
+        public void setEx(String key, String value, long timeToLive, TimeUnit unit) {
             log.info("setEx(...) => key -> {}, value -> {}, timeToLive -> {}, unit -> {}", key, value, timeToLive, unit);
             redisTemplate.opsForValue().set(key, value, timeToLive, unit);
         }
@@ -446,7 +446,7 @@ public class RedisHelper {
          * @return set 是否成功
          * @since 2020/3/8 16:51:36
          */
-        public static boolean setIfAbsent(String key, String value) {
+        public boolean setIfAbsent(String key, String value) {
             log.info("setIfAbsent(...) => key -> {}, value -> {}", key, value);
             Boolean result = redisTemplate.opsForValue().setIfAbsent(key, value);
             log.info("setIfAbsent(...) => result -> {}", result);
@@ -468,7 +468,7 @@ public class RedisHelper {
          * @return set 是否成功
          * @since 2020/3/8 16:51:36
          */
-        public static boolean setIfAbsent(String key, String value, long timeToLive, TimeUnit unit) {
+        public boolean setIfAbsent(String key, String value, long timeToLive, TimeUnit unit) {
             log.info("setIfAbsent(...) => key -> {}, value -> {}, timeToLive -> {}, unit -> {}",
                     key, value, timeToLive, unit);
             Boolean result = redisTemplate.opsForValue().setIfAbsent(key, value, timeToLive, unit);
@@ -499,7 +499,7 @@ public class RedisHelper {
          * @param offset       起始位置
          * @since 2020/3/8 17:04:31
          */
-        public static void setRange(String key, String replaceValue, long offset) {
+        public void setRange(String key, String replaceValue, long offset) {
             log.info("setRange(...) => key -> {}, replaceValue -> {}, offset -> {}", key, replaceValue, offset);
             redisTemplate.opsForValue().set(key, replaceValue, offset);
         }
@@ -514,7 +514,7 @@ public class RedisHelper {
          * @return value 的长度
          * @since 2020/3/8 17:14:30
          */
-        public static long size(String key) {
+        public long size(String key) {
             log.info("size(...) => key -> {}", key);
             Long result = redisTemplate.opsForValue().size(key);
             log.info("size(...) => result -> {}", result);
@@ -532,7 +532,7 @@ public class RedisHelper {
          * @param maps key-value 集
          * @since 2020/3/8 17:21:19
          */
-        public static void multiSet(Map<String, String> maps) {
+        public void multiSet(Map<String, String> maps) {
             log.info("multiSet(...) => maps -> {}", maps);
             redisTemplate.opsForValue().multiSet(maps);
         }
@@ -551,7 +551,7 @@ public class RedisHelper {
          * @return 操作是否成功
          * @since 2020/3/8 17:21:19
          */
-        public static boolean multiSetIfAbsent(Map<String, String> maps) {
+        public boolean multiSetIfAbsent(Map<String, String> maps) {
             log.info("multiSetIfAbsent(...) => maps -> {}", maps);
             Boolean result = redisTemplate.opsForValue().multiSetIfAbsent(maps);
             log.info("multiSetIfAbsent(...) => result -> {}", result);
@@ -575,7 +575,7 @@ public class RedisHelper {
          * @throws RedisSystemException key 对应的 value 值不支持增/减操作时
          * @since 2020/3/8 17:45:51
          */
-        public static long incrBy(String key, long increment) {
+        public long incrBy(String key, long increment) {
             log.info("incrBy(...) => key -> {}, increment -> {}", key, increment);
             Long result = redisTemplate.opsForValue().increment(key, increment);
             log.info("incrBy(...) => result -> {}", result);
@@ -605,7 +605,7 @@ public class RedisHelper {
          * @throws RedisSystemException key对应的value值不支持增/减操作时
          * @since 2020/3/8 17:45:51
          */
-        public static double incrByFloat(String key, double increment) {
+        public double incrByFloat(String key, double increment) {
             log.info("incrByFloat(...) => key -> {}, increment -> {}", key, increment);
             Double result = redisTemplate.opsForValue().increment(key, increment);
             log.info("incrByFloat(...) => result -> {}", result);
@@ -625,7 +625,7 @@ public class RedisHelper {
          * @return 追加后，整个 value 的长度
          * @since 2020/3/8 17:59:21
          */
-        public static int append(String key, String value) {
+        public int append(String key, String value) {
             log.info("append(...) => key -> {}, value -> {}", key, value);
             Integer result = redisTemplate.opsForValue().append(key, value);
             log.info("append(...) => result -> {}", result);
@@ -643,7 +643,7 @@ public class RedisHelper {
          * 注: 若 key 不存在， 则返回 null。
          * @since 2020/3/8 16:27:41
          */
-        public static String get(String key) {
+        public String get(String key) {
             log.info("get(...) => key -> {}", key);
             String result = redisTemplate.opsForValue().get(key);
             log.info("get(...) => result -> {} ", result);
@@ -663,7 +663,7 @@ public class RedisHelper {
          * @return 截取后的字符串
          * @since 2020/3/8 18:08:45
          */
-        public static String getRange(String key, long start, long end) {
+        public String getRange(String key, long start, long end) {
             log.info("getRange(...) => kry -> {}", key);
             String result = redisTemplate.opsForValue().get(key, start, end);
             log.info("getRange(...) => result -> {} ", result);
@@ -680,7 +680,7 @@ public class RedisHelper {
          * @return 旧的 value 值
          * @since 2020/3/8 18:14:24
          */
-        public static String getAndSet(String key, String newValue) {
+        public String getAndSet(String key, String newValue) {
             log.info("getAndSet(...) => key -> {}, value -> {}", key, newValue);
             String oldValue = redisTemplate.opsForValue().getAndSet(key, newValue);
             log.info("getAndSet(...) => oldValue -> {}", oldValue);
@@ -702,7 +702,7 @@ public class RedisHelper {
          * @return offset 位置对应的 bit 的值（true - 1, false - 0）
          * @since 2020/3/8 18:21:10
          */
-        public static boolean getBit(String key, long offset) {
+        public boolean getBit(String key, long offset) {
             log.info("getBit(...) => key -> {}, offset -> {}", key, offset);
             Boolean result = redisTemplate.opsForValue().getBit(key, offset);
             log.info("getBit(...) => result -> {}", result);
@@ -721,7 +721,7 @@ public class RedisHelper {
          * @return value 值集合
          * @since 2020/3/8 18:26:33
          */
-        public static List<String> multiGet(Collection<String> keys) {
+        public List<String> multiGet(Collection<String> keys) {
             log.info("multiGet(...) => keys -> {}", keys);
             List<String> result = redisTemplate.opsForValue().multiGet(keys);
             log.info("multiGet(...) => result -> {}", result);
@@ -738,7 +738,7 @@ public class RedisHelper {
      * @author JustryDeng
      * @since 2020/3/8 23:39:26
      */
-    public static class HashOps {
+    public class HashOps {
 
         /**
          * 向 key 对应的 hash 中，增加一个键值对 entryKey-entryValue
@@ -751,7 +751,7 @@ public class RedisHelper {
          * @param entryValue 要向 hash 中增加的键值对里的值
          * @since 2020/3/8 23:49:52
          */
-        public static void hPut(String key, String entryKey, String entryValue) {
+        public void hPut(String key, String entryKey, String entryValue) {
             log.info("hPut(...) => key -> {}, entryKey -> {}, entryValue -> {}", key, entryKey, entryValue);
             redisTemplate.opsForHash().put(key, entryKey, entryValue);
         }
@@ -766,7 +766,7 @@ public class RedisHelper {
          * @param maps 要向 hash 中增加的键值对集
          * @since 2020/3/8 23:49:52
          */
-        public static void hPutAll(String key, Map<String, String> maps) {
+        public void hPutAll(String key, Map<String, String> maps) {
             log.info("hPutAll(...) => key -> {}, maps -> {}", key, maps);
             redisTemplate.opsForHash().putAll(key, maps);
         }
@@ -781,7 +781,7 @@ public class RedisHelper {
          * @return 操作是否成功。
          * @since 2020/3/8 23:49:52
          */
-        public static boolean hPutIfAbsent(String key, String entryKey, String entryValue) {
+        public boolean hPutIfAbsent(String key, String entryKey, String entryValue) {
             log.info("hPutIfAbsent(...) => key -> {}, entryKey -> {}, entryValue -> {}",
                     key, entryKey, entryValue);
             Boolean result = redisTemplate.opsForHash().putIfAbsent(key, entryKey, entryValue);
@@ -800,7 +800,7 @@ public class RedisHelper {
          * @return key 对应的 hash 里的 entryKey 对应的 entryValue 值
          * @since 2020/3/9 9:09:30
          */
-        public static Object hGet(String key, String entryKey) {
+        public Object hGet(String key, String entryKey) {
             log.info("hGet(...) => key -> {}, entryKey -> {}", key, entryKey);
             Object entryValue = redisTemplate.opsForHash().get(key, entryKey);
             log.info("hGet(...) => entryValue -> {}", entryValue);
@@ -816,7 +816,7 @@ public class RedisHelper {
          * @return key 对应的 hash。
          * @since 2020/3/9 9:09:30
          */
-        public static Map<Object, Object> hGetAll(String key) {
+        public Map<Object, Object> hGetAll(String key) {
             log.info("hGetAll(...) => key -> {}", key);
             Map<Object, Object> result = redisTemplate.opsForHash().entries(key);
             log.info("hGetAll(...) => result -> {}", result);
@@ -837,7 +837,7 @@ public class RedisHelper {
          * @return hash 中对应 entryKeys 的对应 entryValue 集
          * @since 2020/3/9 9:25:38
          */
-        public static List<Object> hMultiGet(String key, Collection<Object> entryKeys) {
+        public List<Object> hMultiGet(String key, Collection<Object> entryKeys) {
             log.info("hMultiGet(...) => key -> {}, entryKeys -> {}", key, entryKeys);
             List<Object> entryValues = redisTemplate.opsForHash().multiGet(key, entryKeys);
             log.info("hMultiGet(...) => entryValues -> {}", entryValues);
@@ -862,7 +862,7 @@ public class RedisHelper {
          * @return 删除了对应 hash 中多少个 entry
          * @since 2020/3/9 9:37:47
          */
-        public static long hDelete(String key, Object... entryKeys) {
+        public long hDelete(String key, Object... entryKeys) {
             log.info("hDelete(...) => key -> {}, entryKeys -> {}", key, entryKeys);
             Long count = redisTemplate.opsForHash().delete(key, entryKeys);
             log.info("hDelete(...) => count -> {}", count);
@@ -881,7 +881,7 @@ public class RedisHelper {
          * @return hash 中是否存在 entryKey 对应的 entry.
          * @since 2020/3/9 9:51:55
          */
-        public static boolean hExists(String key, String entryKey) {
+        public boolean hExists(String key, String entryKey) {
             log.info("hDelete(...) => key -> {}, entryKeys -> {}", key, entryKey);
             Boolean exist = redisTemplate.opsForHash().hasKey(key, entryKey);
             log.info("hDelete(...) => exist -> {}", exist);
@@ -904,7 +904,7 @@ public class RedisHelper {
          * @throws RedisSystemException key对应的value值不支持增/减操作时
          * @since 2020/3/9 10:09:28
          */
-        public static long hIncrBy(String key, Object entryKey, long increment) {
+        public long hIncrBy(String key, Object entryKey, long increment) {
             log.info("hIncrBy(...) => key -> {}, entryKey -> {}, increment -> {}",
                     key, entryKey, increment);
             Long result = redisTemplate.opsForHash().increment(key, entryKey, increment);
@@ -930,7 +930,7 @@ public class RedisHelper {
          * @throws RedisSystemException key对应的value值不支持增/减操作时
          * @since 2020/3/9 10:09:28
          */
-        public static double hIncrByFloat(String key, Object entryKey, double increment) {
+        public double hIncrByFloat(String key, Object entryKey, double increment) {
             log.info("hIncrByFloat(...) => key -> {}, entryKey -> {}, increment -> {}",
                     key, entryKey, increment);
             Double result = redisTemplate.opsForHash().increment(key, entryKey, increment);
@@ -947,7 +947,7 @@ public class RedisHelper {
          * @return hash中的所有entryKey
          * @since 2020/3/9 10:30:13
          */
-        public static Set<Object> hKeys(String key) {
+        public Set<Object> hKeys(String key) {
             log.info("hKeys(...) => key -> {}", key);
             Set<Object> entryKeys = redisTemplate.opsForHash().keys(key);
             log.info("hKeys(...) => entryKeys -> {}", entryKeys);
@@ -963,7 +963,7 @@ public class RedisHelper {
          * @return hash中的所有entryValue
          * @since 2020/3/9 10:30:13
          */
-        public static List<Object> hValues(String key) {
+        public List<Object> hValues(String key) {
             log.info("hValues(...) => key -> {}", key);
             List<Object> entryValues = redisTemplate.opsForHash().values(key);
             log.info("hValues(...) => entryValues -> {}", entryValues);
@@ -979,7 +979,7 @@ public class RedisHelper {
          * @return (key对应的)hash中, entry的个数
          * @since 2020/3/9 10:41:01
          */
-        public static long hSize(String key) {
+        public long hSize(String key) {
             log.info("hSize(...) => key -> {}", key);
             Long count = redisTemplate.opsForHash().size(key);
             log.info("hSize(...) => count -> {}", count);
@@ -1004,7 +1004,7 @@ public class RedisHelper {
          * @return 匹配到的(key对应的)hash中的entry
          * @since 2020/3/9 10:49:27
          */
-        public static Cursor<Map.Entry<Object, Object>> hScan(String key, ScanOptions options) {
+        public Cursor<Map.Entry<Object, Object>> hScan(String key, ScanOptions options) {
             log.info("hScan(...) => key -> {}, options -> {}", key, JSON.toJSONString(options));
             Cursor<Map.Entry<Object, Object>> cursor = redisTemplate.opsForHash().scan(key, options);
             log.info("hScan(...) => cursor -> {}", JSON.toJSONString(cursor));
@@ -1030,7 +1030,7 @@ public class RedisHelper {
      * @author JustryDeng
      * @since 2020/3/9 11:30:48
      */
-    public static class ListOps {
+    public class ListOps {
 
         /**
          * 从左端推入元素进列表
@@ -1042,7 +1042,7 @@ public class RedisHelper {
          * @return 推入后，(key对应的)list的size
          * @since 2020/3/9 11:56:05
          */
-        public static long lLeftPush(String key, String item) {
+        public long lLeftPush(String key, String item) {
             log.info("lLeftPush(...) => key -> {}, item -> {}", key, item);
             Long size = redisTemplate.opsForList().leftPush(key, item);
             log.info("lLeftPush(...) => size -> {}", size);
@@ -1063,7 +1063,7 @@ public class RedisHelper {
          * @return 推入后，(key对应的)list的size
          * @since 2020/3/9 11:56:05
          */
-        public static long lLeftPushAll(String key, String... items) {
+        public long lLeftPushAll(String key, String... items) {
             log.info("lLeftPushAll(...) => key -> {}, items -> {}", key, items);
             Long size = redisTemplate.opsForList().leftPushAll(key, items);
             log.info("lLeftPushAll(...) => size -> {}", size);
@@ -1084,7 +1084,7 @@ public class RedisHelper {
          * @return 推入后，(key对应的)list的size
          * @since 2020/3/9 11:56:05
          */
-        public static long lLeftPushAll(String key, Collection<String> items) {
+        public long lLeftPushAll(String key, Collection<String> items) {
             log.info("lLeftPushAll(...) => key -> {}, items -> {}", key, items);
             Long size = redisTemplate.opsForList().leftPushAll(key, items);
             log.info("lLeftPushAll(...) => size -> {}", size);
@@ -1103,7 +1103,7 @@ public class RedisHelper {
          * @return 推入后，(key对应的)list的size
          * @since 2020/3/9 13:40:08
          */
-        public static long lLeftPushIfPresent(String key, String item) {
+        public long lLeftPushIfPresent(String key, String item) {
             log.info("lLeftPushIfPresent(...) => key -> {}, item -> {}", key, item);
             Long size = redisTemplate.opsForList().leftPushIfPresent(key, item);
             log.info("lLeftPushIfPresent(...) => size -> {}", size);
@@ -1124,7 +1124,7 @@ public class RedisHelper {
          * @return 推入后，(key对应的)list的size
          * @since 2020/3/9 11:56:05
          */
-        public static long lLeftPush(String key, String pivot, String item) {
+        public long lLeftPush(String key, String pivot, String item) {
             log.info("lLeftPush(...) => key -> {}, pivot -> {}, item -> {}", key, pivot, item);
             Long size = redisTemplate.opsForList().leftPush(key, pivot, item);
             log.info("lLeftPush(...) => size -> {}", size);
@@ -1137,7 +1137,7 @@ public class RedisHelper {
         /**
          * 与{@link RedisHelper.ListOps#lLeftPush(String, String)}类比即可， 不过是从list右侧推入元素
          */
-        public static long lRightPush(String key, String item) {
+        public long lRightPush(String key, String item) {
             log.info("lRightPush(...) => key -> {}, item -> {}", key, item);
             Long size = redisTemplate.opsForList().rightPush(key, item);
             log.info("lRightPush(...) => size -> {}", size);
@@ -1150,7 +1150,7 @@ public class RedisHelper {
         /**
          * 与{@link RedisHelper.ListOps#lLeftPushAll(String, String...)}类比即可， 不过是从list右侧推入元素
          */
-        public static long lRightPushAll(String key, String... items) {
+        public long lRightPushAll(String key, String... items) {
             log.info("lRightPushAll(...) => key -> {}, items -> {}", key, items);
             Long size = redisTemplate.opsForList().rightPushAll(key, items);
             log.info("lRightPushAll(...) => size -> {}", size);
@@ -1163,7 +1163,7 @@ public class RedisHelper {
         /**
          * 与{@link RedisHelper.ListOps#lLeftPushAll(String, Collection<String>)}类比即可， 不过是从list右侧推入元素
          */
-        public static long lRightPushAll(String key, Collection<String> items) {
+        public long lRightPushAll(String key, Collection<String> items) {
             log.info("lRightPushAll(...) => key -> {}, items -> {}", key, items);
             Long size = redisTemplate.opsForList().rightPushAll(key, items);
             log.info("lRightPushAll(...) => size -> {}", size);
@@ -1176,7 +1176,7 @@ public class RedisHelper {
         /**
          * 与{@link RedisHelper.ListOps#lLeftPushIfPresent(String, String)}类比即可， 不过是从list右侧推入元素
          */
-        public static long lRightPushIfPresent(String key, String item) {
+        public long lRightPushIfPresent(String key, String item) {
             log.info("lRightPushIfPresent(...) => key -> {}, item -> {}", key, item);
             Long size = redisTemplate.opsForList().rightPushIfPresent(key, item);
             log.info("lRightPushIfPresent(...) => size -> {}", size);
@@ -1189,7 +1189,7 @@ public class RedisHelper {
         /**
          * 与{@link RedisHelper.ListOps#lLeftPush(String, String, String)}类比即可， 不过是从list右侧推入元素
          */
-        public static long lRightPush(String key, String pivot, String item) {
+        public long lRightPush(String key, String pivot, String item) {
             log.info("lLeftPush(...) => key -> {}, pivot -> {}, item -> {}", key, pivot, item);
             Long size = redisTemplate.opsForList().rightPush(key, pivot, item);
             log.info("lLeftPush(...) => size -> {}", size);
@@ -1210,7 +1210,7 @@ public class RedisHelper {
          * @return 移出的那个元素
          * @since 2020/3/9 14:33:56
          */
-        public static String lLeftPop(String key) {
+        public String lLeftPop(String key) {
             log.info("lLeftPop(...) => key -> {}", key);
             String item = redisTemplate.opsForList().leftPop(key);
             log.info("lLeftPop(...) => item -> {}", item);
@@ -1233,7 +1233,7 @@ public class RedisHelper {
          * @return 移出的那个元素
          * @since 2020/3/9 14:33:56
          */
-        public static String lLeftPop(String key, long timeout, TimeUnit unit) {
+        public String lLeftPop(String key, long timeout, TimeUnit unit) {
             log.info("lLeftPop(...) => key -> {}, timeout -> {}, unit -> {}", key, timeout, unit);
             String item = redisTemplate.opsForList().leftPop(key, timeout, unit);
             log.info("lLeftPop(...) => item -> {}", item);
@@ -1243,7 +1243,7 @@ public class RedisHelper {
         /**
          * 与{@link RedisHelper.ListOps#lLeftPop(String)}类比即可， 不过是从list右侧移出元素
          */
-        public static String lRightPop(String key) {
+        public String lRightPop(String key) {
             log.info("lRightPop(...) => key -> {}", key);
             String item = redisTemplate.opsForList().rightPop(key);
             log.info("lRightPop(...) => item -> {}", item);
@@ -1253,7 +1253,7 @@ public class RedisHelper {
         /**
          * 与{@link RedisHelper.ListOps#lLeftPop(String, long, TimeUnit)}类比即可， 不过是从list右侧移出元素
          */
-        public static String lRightPop(String key, long timeout, TimeUnit unit) {
+        public String lRightPop(String key, long timeout, TimeUnit unit) {
             log.info("lRightPop(...) => key -> {}, timeout -> {}, unit -> {}", key, timeout, unit);
             String item = redisTemplate.opsForList().rightPop(key, timeout, unit);
             log.info("lRightPop(...) => item -> {}", item);
@@ -1275,7 +1275,7 @@ public class RedisHelper {
          * @return 移动的这个元素
          * @since 2020/3/9 15:06:59
          */
-        public static String lRightPopAndLeftPush(String sourceKey, String destinationKey) {
+        public String lRightPopAndLeftPush(String sourceKey, String destinationKey) {
             log.info("lRightPopAndLeftPush(...) => sourceKey -> {}, destinationKey -> {}",
                     sourceKey, destinationKey);
             String item = redisTemplate.opsForList().rightPopAndLeftPush(sourceKey, destinationKey);
@@ -1301,8 +1301,8 @@ public class RedisHelper {
          * @return 移动的这个元素
          * @since 2020/3/9 15:06:59
          */
-        public static String lRightPopAndLeftPush(String sourceKey, String destinationKey, long timeout,
-                                                  TimeUnit unit) {
+        public String lRightPopAndLeftPush(String sourceKey, String destinationKey, long timeout,
+                                           TimeUnit unit) {
             log.info("lRightPopAndLeftPush(...) => sourceKey -> {}, destinationKey -> {}, timeout -> {},"
                     + " unit -> {}", sourceKey, destinationKey, timeout, unit);
             String item = redisTemplate.opsForList().rightPopAndLeftPush(sourceKey, destinationKey, timeout, unit);
@@ -1321,7 +1321,7 @@ public class RedisHelper {
          * @param item  要替换成的值
          * @since 2020/3/9 15:39:50
          */
-        public static void lSet(String key, long index, String item) {
+        public void lSet(String key, long index, String item) {
             log.info("lSet(...) => key -> {}, index -> {}, item -> {}", key, index, item);
             redisTemplate.opsForList().set(key, index, item);
         }
@@ -1336,7 +1336,7 @@ public class RedisHelper {
          * @return list中索引index对应的item
          * @since 2020/3/10 0:27:23
          */
-        public static String lIndex(String key, long index) {
+        public String lIndex(String key, long index) {
             log.info("lIndex(...) => key -> {}, index -> {}", key, index);
             String item = redisTemplate.opsForList().index(key, index);
             log.info("lIndex(...) => item -> {}", item);
@@ -1358,7 +1358,7 @@ public class RedisHelper {
          * @return 对应的元素集合
          * @since 2020/3/10 0:34:59
          */
-        public static List<String> lRange(String key, long start, long end) {
+        public List<String> lRange(String key, long start, long end) {
             log.info("lRange(...) => key -> {}, start -> {}, end -> {}", key, start, end);
             List<String> result = redisTemplate.opsForList().range(key, start, end);
             log.info("lRange(...) => result -> {}", result);
@@ -1373,7 +1373,7 @@ public class RedisHelper {
          * @see RedisHelper.ListOps#lRange(String, long, long)
          * @since 2020/3/10 0:46:50
          */
-        public static List<String> lWholeList(String key) {
+        public List<String> lWholeList(String key) {
             log.info("lWholeList(...) => key -> {}", key);
             List<String> result = redisTemplate.opsForList().range(key, 0, -1);
             log.info("lWholeList(...) => result -> {}", result);
@@ -1389,7 +1389,7 @@ public class RedisHelper {
          * @return list的size。
          * @since 2020/3/10 0:48:40
          */
-        public static long lSize(String key) {
+        public long lSize(String key) {
             log.info("lSize(...) => key -> {}", key);
             Long size = redisTemplate.opsForList().size(key);
             log.info("lSize(...) => size -> {}", size);
@@ -1416,7 +1416,7 @@ public class RedisHelper {
          * @return 实际删除了的item的个数
          * @since 2020/3/10 0:52:57
          */
-        public static long lRemove(String key, long expectCount, String item) {
+        public long lRemove(String key, long expectCount, String item) {
             log.info("lRemove(...) => key -> {}, expectCount -> {}, item -> {}", key, expectCount, item);
             Long actualCount = redisTemplate.opsForList().remove(key, expectCount, item);
             log.info("lRemove(...) => actualCount -> {}", actualCount);
@@ -1440,7 +1440,7 @@ public class RedisHelper {
          * @param end   要删除的item集的结尾项的索引
          * @since 2020/3/10 1:16:58
          */
-        public static void lTrim(String key, long start, long end) {
+        public void lTrim(String key, long start, long end) {
             log.info("lTrim(...) => key -> {}, start -> {}, end -> {}", key, start, end);
             redisTemplate.opsForList().trim(key, start, end);
         }
@@ -1458,7 +1458,7 @@ public class RedisHelper {
      * @author JustryDeng
      * @since 2020/3/9 11:30:48
      */
-    public static class SetOps {
+    public class SetOps {
 
         /**
          * 向(key对应的)set中添加items
@@ -1471,7 +1471,7 @@ public class RedisHelper {
          * @return 此次添加操作, 添加到set中的元素的个数
          * @since 2020/3/11 8:16:00
          */
-        public static long sAdd(String key, String... items) {
+        public long sAdd(String key, String... items) {
             log.info("sAdd(...) => key -> {}, items -> {}", key, items);
             Long count = redisTemplate.opsForSet().add(key, items);
             log.info("sAdd(...) => count -> {}", count);
@@ -1492,7 +1492,7 @@ public class RedisHelper {
          * @return 实际删除了的个数
          * @since 2020/3/11 8:26:43
          */
-        public static long sRemove(String key, Object... items) {
+        public long sRemove(String key, Object... items) {
             log.info("sRemove(...) => key -> {}, items -> {}", key, items);
             Long count = redisTemplate.opsForSet().remove(key, items);
             log.info("sRemove(...) => count -> {}", count);
@@ -1514,7 +1514,7 @@ public class RedisHelper {
          * @return 移出的项
          * @since 2020/3/11 8:32:40
          */
-        public static String sPop(String key) {
+        public String sPop(String key) {
             log.info("sPop(...) => key -> {}", key);
             String popItem = redisTemplate.opsForSet().pop(key);
             log.info("sPop(...) => popItem -> {}", popItem);
@@ -1535,7 +1535,7 @@ public class RedisHelper {
          * @return 移动成功与否
          * @since 2020/3/11 8:43:32
          */
-        public static boolean sMove(String sourceKey, String item, String destinationKey) {
+        public boolean sMove(String sourceKey, String item, String destinationKey) {
             Boolean result = redisTemplate.opsForSet().move(sourceKey, item, destinationKey);
             log.info("sMove(...) => sourceKey -> {}, destinationKey -> {}, item -> {}",
                     sourceKey, destinationKey, item);
@@ -1555,7 +1555,7 @@ public class RedisHelper {
          * @return (key对应的)set中的元素个数
          * @since 2020/3/11 8:57:19
          */
-        public static long sSize(String key) {
+        public long sSize(String key) {
             log.info("sSize(...) => key -> {}", key);
             Long size = redisTemplate.opsForSet().size(key);
             log.info("sSize(...) => size -> {}", size);
@@ -1575,7 +1575,7 @@ public class RedisHelper {
          * @return (key对应的)set中是否含有item
          * @since 2020/3/11 9:03:29
          */
-        public static boolean sIsMember(String key, Object item) {
+        public boolean sIsMember(String key, Object item) {
             log.info("sSize(...) => key -> {}, size -> {}", key, item);
             Boolean result = redisTemplate.opsForSet().isMember(key, item);
             log.info("sSize(...) => result -> {}", result);
@@ -1596,7 +1596,7 @@ public class RedisHelper {
          * @return item交集
          * @since 2020/3/11 9:31:25
          */
-        public static Set<String> sIntersect(String key, String otherKey) {
+        public Set<String> sIntersect(String key, String otherKey) {
             log.info("sIntersect(...) => key -> {}, otherKey -> {}", key, otherKey);
             Set<String> intersectResult = redisTemplate.opsForSet().intersect(key, otherKey);
             log.info("sIntersect(...) => intersectResult -> {}", intersectResult);
@@ -1614,7 +1614,7 @@ public class RedisHelper {
          * @return item交集
          * @since 2020/3/11 9:39:23
          */
-        public static Set<String> sIntersect(String key, Collection<String> otherKeys) {
+        public Set<String> sIntersect(String key, Collection<String> otherKeys) {
             log.info("sIntersect(...) => key -> {}, otherKeys -> {}", key, otherKeys);
             Set<String> intersectResult = redisTemplate.opsForSet().intersect(key, otherKeys);
             log.info("sIntersect(...) => intersectResult -> {}", intersectResult);
@@ -1636,7 +1636,7 @@ public class RedisHelper {
          * @return add到(storeKey对应的)Set后, 该set对应的size
          * @since 2020/3/11 9:46:46
          */
-        public static long sIntersectAndStore(String key, String otherKey, String storeKey) {
+        public long sIntersectAndStore(String key, String otherKey, String storeKey) {
             log.info("sIntersectAndStore(...) => key -> {}, otherKey -> {}, storeKey -> {}",
                     key, otherKey, storeKey);
             Long size = redisTemplate.opsForSet().intersectAndStore(key, otherKey, storeKey);
@@ -1658,7 +1658,7 @@ public class RedisHelper {
          *
          * @since 2020/3/11 11:04:29
          */
-        public static long sIntersectAndStore(String key, Collection<String> otherKeys, String storeKey) {
+        public long sIntersectAndStore(String key, Collection<String> otherKeys, String storeKey) {
             log.info("sIntersectAndStore(...) => key -> {}, otherKeys -> {}, storeKey -> {}", key, otherKeys, storeKey);
             Long size = redisTemplate.opsForSet().intersectAndStore(key, otherKeys, storeKey);
             log.info("sIntersectAndStore(...) => size -> {}", size);
@@ -1678,7 +1678,7 @@ public class RedisHelper {
          * @return item并集
          * @since 2020/3/11 11:18:35
          */
-        public static Set<String> sUnion(String key, String otherKey) {
+        public Set<String> sUnion(String key, String otherKey) {
             log.info("sUnion(...) => key -> {}, otherKey -> {}", key, otherKey);
             Set<String> unionResult = redisTemplate.opsForSet().union(key, otherKey);
             log.info("sUnion(...) => unionResult -> {}", unionResult);
@@ -1695,7 +1695,7 @@ public class RedisHelper {
          * @return item并集
          * @since 2020/3/11 11:18:35
          */
-        public static Set<String> sUnion(String key, Collection<String> otherKeys) {
+        public Set<String> sUnion(String key, Collection<String> otherKeys) {
             log.info("sUnion(...) => key -> {}, otherKeys -> {}", key, otherKeys);
             Set<String> unionResult = redisTemplate.opsForSet().union(key, otherKeys);
             log.info("sUnion(...) => unionResult -> {}", unionResult);
@@ -1717,7 +1717,7 @@ public class RedisHelper {
          * @return add到(storeKey对应的)Set后, 该set对应的size
          * @since 2020/3/11 12:26:24
          */
-        public static long sUnionAndStore(String key, String otherKey, String storeKey) {
+        public long sUnionAndStore(String key, String otherKey, String storeKey) {
             log.info("sUnionAndStore(...) => key -> {}, otherKey -> {}, storeKey -> {}",
                     key, otherKey, storeKey);
             Long size = redisTemplate.opsForSet().unionAndStore(key, otherKey, storeKey);
@@ -1743,7 +1743,7 @@ public class RedisHelper {
          * @return add到(storeKey对应的)Set后, 该set对应的size
          * @since 2020/3/11 12:26:24
          */
-        public static long sUnionAndStore(String key, Collection<String> otherKeys, String storeKey) {
+        public long sUnionAndStore(String key, Collection<String> otherKeys, String storeKey) {
             log.info("sUnionAndStore(...) => key -> {}, otherKeys -> {}, storeKey -> {}",
                     key, otherKeys, storeKey);
             Long size = redisTemplate.opsForSet().unionAndStore(key, otherKeys, storeKey);
@@ -1765,7 +1765,7 @@ public class RedisHelper {
          * @return item差集
          * @since 2020/3/11 14:03:57
          */
-        public static Set<String> sDifference(String key, String otherKey) {
+        public Set<String> sDifference(String key, String otherKey) {
             log.info("sDifference(...) => key -> {}, otherKey -> {}",
                     key, otherKey);
             Set<String> differenceResult = redisTemplate.opsForSet().difference(key, otherKey);
@@ -1786,7 +1786,7 @@ public class RedisHelper {
          * @return item差集
          * @since 2020/3/11 14:03:57
          */
-        public static Set<String> sDifference(String key, Collection<String> otherKeys) {
+        public Set<String> sDifference(String key, Collection<String> otherKeys) {
             log.info("sDifference(...) => key -> {}, otherKeys -> {}", key, otherKeys);
             Set<String> differenceResult = redisTemplate.opsForSet().difference(key, otherKeys);
             log.info("sDifference(...) => differenceResult -> {}", differenceResult);
@@ -1808,7 +1808,7 @@ public class RedisHelper {
          * @return add到(storeKey对应的)Set后, 该set对应的size
          * @since 2020/3/11 14:33:36
          */
-        public static long sDifferenceAndStore(String key, String otherKey, String storeKey) {
+        public long sDifferenceAndStore(String key, String otherKey, String storeKey) {
             log.info("sDifferenceAndStore(...) => key -> {}, otherKey -> {}, storeKey -> {}",
                     key, otherKey, storeKey);
             Long size = redisTemplate.opsForSet().differenceAndStore(key, otherKey, storeKey);
@@ -1834,7 +1834,7 @@ public class RedisHelper {
          * @return add到(storeKey对应的)Set后, 该set对应的size
          * @since 2020/3/11 14:33:36
          */
-        public static long sDifferenceAndStore(String key, Collection<String> otherKeys, String storeKey) {
+        public long sDifferenceAndStore(String key, Collection<String> otherKeys, String storeKey) {
             log.info("sDifferenceAndStore(...) => key -> {}, otherKeys -> {}, storeKey -> {}",
                     key, otherKeys, storeKey);
             Long size = redisTemplate.opsForSet().differenceAndStore(key, otherKeys, storeKey);
@@ -1854,7 +1854,7 @@ public class RedisHelper {
          * @return (key对应的)set
          * @since 2020/3/11 14:49:39
          */
-        public static Set<String> sMembers(String key) {
+        public Set<String> sMembers(String key) {
             log.info("sMembers(...) => key -> {}", key);
             Set<String> members = redisTemplate.opsForSet().members(key);
             log.info("sMembers(...) => members -> {}", members);
@@ -1868,7 +1868,7 @@ public class RedisHelper {
          * @return 随机获取到的项
          * @since 2020/3/11 14:54:58
          */
-        public static String sRandomMember(String key) {
+        public String sRandomMember(String key) {
             log.info("sRandomMember(...) => key -> {}", key);
             String randomItem = redisTemplate.opsForSet().randomMember(key);
             log.info("sRandomMember(...) => randomItem -> {}", randomItem);
@@ -1886,7 +1886,7 @@ public class RedisHelper {
          * @return 随机获取到的项集
          * @since 2020/3/11 14:54:58
          */
-        public static List<String> sRandomMembers(String key, long count) {
+        public List<String> sRandomMembers(String key, long count) {
             log.info("sRandomMembers(...) => key -> {}, count -> {}", key, count);
             List<String> randomItems = redisTemplate.opsForSet().randomMembers(key, count);
             log.info("sRandomMembers(...) => randomItems -> {}", randomItems);
@@ -1904,7 +1904,7 @@ public class RedisHelper {
          * @return 随机获取到的项集
          * @since 2020/3/11 14:54:58
          */
-        public static Set<String> sDistinctRandomMembers(String key, long count) {
+        public Set<String> sDistinctRandomMembers(String key, long count) {
             log.info("sDistinctRandomMembers(...) => key -> {}, count -> {}", key, count);
             Set<String> distinctRandomItems = redisTemplate.opsForSet().distinctRandomMembers(key, count);
             log.info("sDistinctRandomMembers(...) => distinctRandomItems -> {}", distinctRandomItems);
@@ -1930,7 +1930,7 @@ public class RedisHelper {
          * @return 匹配到的(key对应的)set中的项
          * @since 2020/3/9 10:49:27
          */
-        public static Cursor<String> sScan(String key, ScanOptions options) {
+        public Cursor<String> sScan(String key, ScanOptions options) {
             log.info("sScan(...) => key -> {}, options -> {}", key, JSON.toJSONString(options));
             Cursor<String> cursor = redisTemplate.opsForSet().scan(key, options);
             log.info("sScan(...) => cursor -> {}", JSON.toJSONString(cursor));
@@ -1953,7 +1953,7 @@ public class RedisHelper {
      * @author JustryDeng
      * @since 2020/3/11 15:28:48
      */
-    public static class ZSetOps {
+    public class ZSetOps {
 
         /**
          * 向(key对应的)zset中添加(item, score)
@@ -1974,7 +1974,7 @@ public class RedisHelper {
          * @return 是否添加成功
          * @since 2020/3/11 15:35:30
          */
-        public static boolean zAdd(String key, String item, double score) {
+        public boolean zAdd(String key, String item, double score) {
             log.info("zAdd(...) => key -> {}, item -> {}, score -> {}", key, item, score);
             Boolean result = redisTemplate.opsForZSet().add(key, item, score);
             log.info("zAdd(...) => result -> {}", result);
@@ -1998,7 +1998,7 @@ public class RedisHelper {
          * @return 本次添加进(key对应的)zset中的entry的个数
          * @since 2020/3/11 16:45:45
          */
-        public static long zAdd(String key, Set<ZSetOperations.TypedTuple<String>> entries) {
+        public long zAdd(String key, Set<ZSetOperations.TypedTuple<String>> entries) {
             log.info("zAdd(...) => key -> {}, entries -> {}", key, JSON.toJSONString(entries));
             Long count = redisTemplate.opsForZSet().add(key, entries);
             log.info("zAdd(...) => count -> {}", count);
@@ -2018,7 +2018,7 @@ public class RedisHelper {
          * @return 实际移除了的项的个数
          * @since 2020/3/11 17:20:12
          */
-        public static long zRemove(String key, Object... items) {
+        public long zRemove(String key, Object... items) {
             log.info("zRemove(...) => key -> {}, items -> {}", key, items);
             Long count = redisTemplate.opsForZSet().remove(key, items);
             log.info("zRemove(...) => count -> {}", count);
@@ -2051,7 +2051,7 @@ public class RedisHelper {
          * @return 实际移除了的项的个数
          * @since 2020/3/11 17:20:12
          */
-        public static long zRemoveRange(String key, long startRange, long endRange) {
+        public long zRemoveRange(String key, long startRange, long endRange) {
             log.info("zRemoveRange(...) => key -> {}, startRange -> {}, endRange -> {}",
                     key, startRange, endRange);
             Long count = redisTemplate.opsForZSet().removeRange(key, startRange, endRange);
@@ -2078,7 +2078,7 @@ public class RedisHelper {
          * @return 实际移除了的项的个数
          * @since 2020/3/11 17:20:12
          */
-        public static long zRemoveRangeByScore(String key, double minScore, double maxScore) {
+        public long zRemoveRangeByScore(String key, double minScore, double maxScore) {
             log.info("zRemoveRangeByScore(...) => key -> {}, startIndex -> {}, startIndex -> {}",
                     key, minScore, maxScore);
             Long count = redisTemplate.opsForZSet().removeRangeByScore(key, minScore, maxScore);
@@ -2098,7 +2098,7 @@ public class RedisHelper {
          * @return 修改后的score值
          * @since 2020/3/12 8:55:38
          */
-        public static double zIncrementScore(String key, String item, double delta) {
+        public double zIncrementScore(String key, String item, double delta) {
             log.info("zIncrementScore(...) => key -> {}, item -> {}, delta -> {}", key, item, delta);
             Double scoreValue = redisTemplate.opsForZSet().incrementScore(key, item, delta);
             log.info("zIncrementScore(...) => scoreValue -> {}", scoreValue);
@@ -2120,7 +2120,7 @@ public class RedisHelper {
          * @return 排名(等价于 : 索引)
          * @since 2020/3/12 9:14:09
          */
-        public static long zRank(String key, Object item) {
+        public long zRank(String key, Object item) {
             log.info("zRank(...) => key -> {}, item -> {}", key, item);
             Long rank = redisTemplate.opsForZSet().rank(key, item);
             log.info("zRank(...) => rank -> {}", rank);
@@ -2142,7 +2142,7 @@ public class RedisHelper {
          * @return 排名(等价于 : 索引)
          * @since 2020/3/12 9:14:09
          */
-        public static long zReverseRank(String key, Object item) {
+        public long zReverseRank(String key, Object item) {
             log.info("zReverseRank(...) => key -> {}, item -> {}", key, item);
             Long reverseRank = redisTemplate.opsForZSet().reverseRank(key, item);
             log.info("zReverseRank(...) => reverseRank -> {}", reverseRank);
@@ -2171,7 +2171,7 @@ public class RedisHelper {
          * @return 对应的item项集
          * @since 2020/3/12 9:50:40
          */
-        public static Set<String> zRange(String key, long start, long end) {
+        public Set<String> zRange(String key, long start, long end) {
             log.info("zRange(...) => key -> {}, start -> {}, end -> {}", key, start, end);
             Set<String> result = redisTemplate.opsForZSet().range(key, start, end);
             log.info("zRange(...) => result -> {}", result);
@@ -2186,7 +2186,7 @@ public class RedisHelper {
          * @see RedisHelper.ZSetOps#zRange(String, long, long)
          * @since 2020/3/12 10:02:07
          */
-        public static Set<String> zWholeZSetItem(String key) {
+        public Set<String> zWholeZSetItem(String key) {
             log.info("zWholeZSetItem(...) => key -> {}", key);
             Set<String> result = redisTemplate.opsForZSet().range(key, 0, -1);
             log.info("zWholeZSetItem(...) =>result -> {}", result);
@@ -2214,7 +2214,7 @@ public class RedisHelper {
          * @return 对应的entry集
          * @since 2020/3/12 9:50:40
          */
-        public static Set<ZSetOperations.TypedTuple<String>> zRangeWithScores(String key, long start, long end) {
+        public Set<ZSetOperations.TypedTuple<String>> zRangeWithScores(String key, long start, long end) {
             log.info("zRangeWithScores(...) => key -> {}, start -> {}, end -> {}", key, start, end);
             Set<ZSetOperations.TypedTuple<String>> entries = redisTemplate.opsForZSet().rangeWithScores(key, start, end);
             log.info("zRangeWithScores(...) => entries -> {}", JSON.toJSONString(entries));
@@ -2229,7 +2229,7 @@ public class RedisHelper {
          * @see RedisHelper.ZSetOps#zRangeWithScores(String, long, long)
          * @since 2020/3/12 10:02:07
          */
-        public static Set<ZSetOperations.TypedTuple<String>> zWholeZSetEntry(String key) {
+        public Set<ZSetOperations.TypedTuple<String>> zWholeZSetEntry(String key) {
             log.info("zWholeZSetEntry(...) => key -> {}", key);
             Set<ZSetOperations.TypedTuple<String>> entries = redisTemplate.opsForZSet().rangeWithScores(key, 0, -1);
             log.info("zWholeZSetEntry(...) => entries -> {}", JSON.toJSONString(entries));
@@ -2253,7 +2253,7 @@ public class RedisHelper {
          * @return 对应的item项集
          * @since 2020/3/12 9:50:40
          */
-        public static Set<String> zRangeByScore(String key, double minScore, double maxScore) {
+        public Set<String> zRangeByScore(String key, double minScore, double maxScore) {
             log.info("zRangeByScore(...) => key -> {}, minScore -> {}, maxScore -> {}", key, minScore, maxScore);
             Set<String> items = redisTemplate.opsForZSet().rangeByScore(key, minScore, maxScore);
             log.info("zRangeByScore(...) => items -> {}", items);
@@ -2281,8 +2281,8 @@ public class RedisHelper {
          * @return 对应的item项集
          * @since 2020/3/12 9:50:40
          */
-        public static Set<String> zRangeByScore(String key, double minScore, double maxScore,
-                                                long offset, long count) {
+        public Set<String> zRangeByScore(String key, double minScore, double maxScore,
+                                         long offset, long count) {
             log.info("zRangeByScore(...) => key -> {}, minScore -> {}, maxScore -> {}, offset -> {}, "
                     + "count -> {}", key, minScore, maxScore, offset, count);
             Set<String> items = redisTemplate.opsForZSet().rangeByScore(key, minScore, maxScore, offset, count);
@@ -2303,7 +2303,7 @@ public class RedisHelper {
          * 注: 当[minScore, maxScore]的范围比实际zset中score的范围大时, 返回范围上"交集"对应的项集合。
          * @since 2020/3/12 10:02:07
          */
-        public static Set<ZSetOperations.TypedTuple<String>> zRangeByScoreWithScores(String key, double minScore, double maxScore) {
+        public Set<ZSetOperations.TypedTuple<String>> zRangeByScoreWithScores(String key, double minScore, double maxScore) {
             log.info("zRangeByScoreWithScores(...) => key -> {}, minScore -> {}, maxScore -> {}",
                     key, minScore, maxScore);
             Set<ZSetOperations.TypedTuple<String>> entries = redisTemplate.opsForZSet().rangeByScoreWithScores(key, minScore, maxScore);
@@ -2324,9 +2324,9 @@ public class RedisHelper {
          * @return [startIndex, endIndex] & [minScore, maxScore]里的entry
          * @since 2020/3/12 11:09:06
          */
-        public static Set<ZSetOperations.TypedTuple<String>> zRangeByScoreWithScores(String key, double minScore,
-                                                                                     double maxScore, long offset,
-                                                                                     long count) {
+        public Set<ZSetOperations.TypedTuple<String>> zRangeByScoreWithScores(String key, double minScore,
+                                                                              double maxScore, long offset,
+                                                                              long count) {
             log.info("zRangeByScoreWithScores(...) => key -> {}, minScore -> {}, maxScore -> {},"
                             + " offset -> {}, count -> {}",
                     key, minScore, maxScore, offset, count);
@@ -2342,7 +2342,7 @@ public class RedisHelper {
          *
          * @see RedisHelper.ZSetOps#zRange(String, long, long)。 只是zReverseRange这里会提前多一个倒序。
          */
-        public static Set<String> zReverseRange(String key, long start, long end) {
+        public Set<String> zReverseRange(String key, long start, long end) {
             log.info("zReverseRange(...) => key -> {}, start -> {}, end -> {}", key, start, end);
             Set<String> entries = redisTemplate.opsForZSet().reverseRange(key, start, end);
             log.info("zReverseRange(...) => entries -> {}", entries);
@@ -2354,7 +2354,7 @@ public class RedisHelper {
          *
          * @see RedisHelper.ZSetOps#zRangeWithScores(String, long, long)。 只是zReverseRangeWithScores这里会提前多一个倒序。
          */
-        public static Set<ZSetOperations.TypedTuple<String>> zReverseRangeWithScores(String key, long start, long end) {
+        public Set<ZSetOperations.TypedTuple<String>> zReverseRangeWithScores(String key, long start, long end) {
             log.info("zReverseRangeWithScores(...) => key -> {}, start -> {}, end -> {}", key, start, end);
             Set<ZSetOperations.TypedTuple<String>> entries = redisTemplate.opsForZSet().reverseRangeWithScores(key, start, end);
             log.info("zReverseRangeWithScores(...) => entries -> {}", JSON.toJSONString(entries));
@@ -2366,7 +2366,7 @@ public class RedisHelper {
          *
          * @see RedisHelper.ZSetOps#zRangeByScore(String, double, double)。 只是zReverseRangeByScore这里会提前多一个倒序。
          */
-        public static Set<String> zReverseRangeByScore(String key, double minScore, double maxScore) {
+        public Set<String> zReverseRangeByScore(String key, double minScore, double maxScore) {
             log.info("zReverseRangeByScore(...) => key -> {}, minScore -> {}, maxScore -> {}",
                     key, minScore, maxScore);
             Set<String> items = redisTemplate.opsForZSet().reverseRangeByScore(key, minScore, maxScore);
@@ -2379,7 +2379,7 @@ public class RedisHelper {
          *
          * @see RedisHelper.ZSetOps#zRangeByScoreWithScores(String, double, double)。 只是zReverseRangeByScoreWithScores这里会提前多一个倒序。
          */
-        public static Set<ZSetOperations.TypedTuple<String>> zReverseRangeByScoreWithScores(String key, double minScore, double maxScore) {
+        public Set<ZSetOperations.TypedTuple<String>> zReverseRangeByScoreWithScores(String key, double minScore, double maxScore) {
             log.info("zReverseRangeByScoreWithScores(...) => key -> {}, minScore -> {}, maxScore -> {}",
                     key, minScore, maxScore);
             Set<ZSetOperations.TypedTuple<String>> entries = redisTemplate.opsForZSet().reverseRangeByScoreWithScores(key,
@@ -2394,7 +2394,7 @@ public class RedisHelper {
          *
          * @see RedisHelper.ZSetOps#zRangeByScore(String, double, double, long, long)。 只是zReverseRangeByScore这里会提前多一个倒序。
          */
-        public static Set<String> zReverseRangeByScore(String key, double minScore, double maxScore, long offset, long count) {
+        public Set<String> zReverseRangeByScore(String key, double minScore, double maxScore, long offset, long count) {
             log.info("zReverseRangeByScore(...) => key -> {}, minScore -> {}, maxScore -> {}, offset -> {}, "
                     + "count -> {}", key, minScore, maxScore, offset, count);
             Set<String> items = redisTemplate.opsForZSet().reverseRangeByScore(key, minScore, maxScore, offset, count);
@@ -2411,7 +2411,7 @@ public class RedisHelper {
          * @return [minScore, maxScore]中item的个数
          * @since 2020/3/13 12:20:43
          */
-        public static long zCount(String key, double minScore, double maxScore) {
+        public long zCount(String key, double minScore, double maxScore) {
             log.info("zCount(...) => key -> {}, minScore -> {}, maxScore -> {}", key, minScore, maxScore);
             Long count = redisTemplate.opsForZSet().count(key, minScore, maxScore);
             log.info("zCount(...) => count -> {}", count);
@@ -2430,7 +2430,7 @@ public class RedisHelper {
          * @return zset中item的个数
          * @since 2020/3/13 12:20:43
          */
-        public static long zSize(String key) {
+        public long zSize(String key) {
             log.info("zSize(...) => key -> {}", key);
             Long size = redisTemplate.opsForZSet().size(key);
             log.info("zSize(...) => size -> {}", size);
@@ -2449,7 +2449,7 @@ public class RedisHelper {
          * @return zset中item的个数
          * @since 2020/3/13 12:20:43
          */
-        public static long zZCard(String key) {
+        public long zZCard(String key) {
             log.info("zZCard(...) => key -> {}", key);
             Long size = redisTemplate.opsForZSet().zCard(key);
             log.info("zZCard(...) => size -> {}", size);
@@ -2467,7 +2467,7 @@ public class RedisHelper {
          * @return item的score
          * @since 2020/3/13 14:51:43
          */
-        public static double zScore(String key, Object item) {
+        public double zScore(String key, Object item) {
             log.info("zScore(...) => key -> {}, item -> {}", key, item);
             Double score = redisTemplate.opsForZSet().score(key, item);
             log.info("zScore(...) => score -> {}", score);
@@ -2494,7 +2494,7 @@ public class RedisHelper {
          * @return add到(storeKey对应的)ZSet后, 该ZSet对应的size
          * @since 2020/3/11 12:26:24
          */
-        public static long zUnionAndStore(String key, String otherKey, String storeKey) {
+        public long zUnionAndStore(String key, String otherKey, String storeKey) {
             log.info("zUnionAndStore(...) => key -> {}, otherKey -> {}, storeKey -> {}", key, otherKey, storeKey);
             Long size = redisTemplate.opsForZSet().unionAndStore(key, otherKey, storeKey);
             log.info("zUnionAndStore(...) => size -> {}", size);
@@ -2521,7 +2521,7 @@ public class RedisHelper {
          * @return add到(storeKey对应的)ZSet后, 该ZSet对应的size
          * @since 2020/3/11 12:26:24
          */
-        public static long zUnionAndStore(String key, Collection<String> otherKeys, String storeKey) {
+        public long zUnionAndStore(String key, Collection<String> otherKeys, String storeKey) {
             log.info("zUnionAndStore(...) => key -> {}, otherKeys -> {}, storeKey -> {}", key, otherKeys, storeKey);
             Long size = redisTemplate.opsForZSet().unionAndStore(key, otherKeys, storeKey);
             log.info("zUnionAndStore(...) => size -> {}", size);
@@ -2552,7 +2552,7 @@ public class RedisHelper {
          * @return add到(storeKey对应的)ZSet后, 该ZSet对应的size
          * @since 2020/3/11 9:46:46
          */
-        public static long zIntersectAndStore(String key, String otherKey, String storeKey) {
+        public long zIntersectAndStore(String key, String otherKey, String storeKey) {
             log.info("zIntersectAndStore(...) => key -> {}, otherKey -> {}, storeKey -> {}", key, otherKey, storeKey);
             Long size = redisTemplate.opsForZSet().intersectAndStore(key, otherKey, storeKey);
             log.info("zIntersectAndStore(...) => size -> {}", size);
@@ -2575,7 +2575,7 @@ public class RedisHelper {
          * @return add到(storeKey对应的)ZSet后, 该ZSet对应的size
          * @since 2020/3/11 11:04:29
          */
-        public static long zIntersectAndStore(String key, Collection<String> otherKeys, String storeKey) {
+        public long zIntersectAndStore(String key, Collection<String> otherKeys, String storeKey) {
             log.info("zIntersectAndStore(...) => key -> {}, otherKeys -> {}, storeKey -> {}",
                     key, otherKeys, storeKey);
             Long size = redisTemplate.opsForZSet().intersectAndStore(key, otherKeys, storeKey);
@@ -2652,22 +2652,22 @@ public class RedisHelper {
      * @author JustryDeng
      * @since 2020/3/14 19:23:26
      */
-    public static class LockOps {
+    public class LockOps {
 
         /**
          * 分布式锁默认（最大）存活时长
          */
-        public static final long DEFAULT_LOCK_TIMEOUT = 3;
+        public final long DEFAULT_LOCK_TIMEOUT = 3;
         /**
          * DEFAULT_LOCK_TIMEOUT的单位
          */
-        public static final TimeUnit DEFAULT_TIMEOUT_UNIT = TimeUnit.SECONDS;
+        public final TimeUnit DEFAULT_TIMEOUT_UNIT = TimeUnit.SECONDS;
         /**
          * lua 脚本, 保证 释放锁脚本 的原子性（以避免, 并发场景下, 释放了别人的锁）
          */
-        private static final String RELEASE_LOCK_LUA;
+        private final String RELEASE_LOCK_LUA;
 
-        static {
+        {
             // 不论 lua 中 0 是否代表失败; 对于 java 的 Boolean 而言, 返回 0, 则会被解析为 false
             RELEASE_LOCK_LUA = "if redis.call('get',KEYS[1]) == ARGV[1] "
                     + "then "
@@ -2684,7 +2684,7 @@ public class RedisHelper {
          *
          * @see RedisHelper.LockOps#getLock(String, String, long, TimeUnit)
          */
-        public static boolean getLock(final String key, final String value) {
+        public boolean getLock(final String key, final String value) {
             return getLock(key, value, DEFAULT_LOCK_TIMEOUT, DEFAULT_TIMEOUT_UNIT);
         }
 
@@ -2700,8 +2700,8 @@ public class RedisHelper {
          * @return 是否成功
          * @see RedisHelper.LockOps#getLock(String, String, long, TimeUnit)
          */
-        public static boolean getLockUntilTimeout(final String key, final String value,
-                                                  final long retryTimeoutLimit) {
+        public boolean getLockUntilTimeout(final String key, final String value,
+                                           final long retryTimeoutLimit) {
             return getLockUntilTimeout(key, value, DEFAULT_LOCK_TIMEOUT, DEFAULT_TIMEOUT_UNIT, retryTimeoutLimit);
         }
 
@@ -2717,9 +2717,9 @@ public class RedisHelper {
          * @return 是否成功
          * @see RedisHelper.LockOps#getLock(String, String, long, TimeUnit, boolean)
          */
-        public static boolean getLockUntilTimeout(final String key, final String value,
-                                                  final long timeout, final TimeUnit unit,
-                                                  final long retryTimeoutLimit) {
+        public boolean getLockUntilTimeout(final String key, final String value,
+                                           final long timeout, final TimeUnit unit,
+                                           final long retryTimeoutLimit) {
             log.info("getLockUntilTimeout(...) => key -> {}, value -> {}, timeout -> {}, unit -> {}, "
                     + "retryTimeoutLimit -> {}ms", key, value, timeout, unit, retryTimeoutLimit);
             long startTime = Instant.now().toEpochMilli();
@@ -2748,8 +2748,8 @@ public class RedisHelper {
          *
          * @see RedisHelper.LockOps#getLock(String, String, long, TimeUnit, boolean)
          */
-        public static boolean getLock(final String key, final String value,
-                                      final long timeout, final TimeUnit unit) {
+        public boolean getLock(final String key, final String value,
+                               final long timeout, final TimeUnit unit) {
             return getLock(key, value, timeout, unit, true);
         }
 
@@ -2772,9 +2772,9 @@ public class RedisHelper {
          * @param recordLog 是否记录日志
          * @return 是否成功
          */
-        public static boolean getLock(final String key, final String value,
-                                      final long timeout, final TimeUnit unit,
-                                      boolean recordLog) {
+        public boolean getLock(final String key, final String value,
+                               final long timeout, final TimeUnit unit,
+                               boolean recordLog) {
             if (recordLog) {
                 log.info("getLock(...) => key -> {}, value -> {}, timeout -> {}, unit -> {}",
                         key, value, timeout, unit);
@@ -2805,7 +2805,7 @@ public class RedisHelper {
          * @return 释放锁是否成功
          * @since 2020/3/15 17:00:45
          */
-        public static boolean releaseLock(final String key, final String value) {
+        public boolean releaseLock(final String key, final String value) {
             log.info("releaseLock(...) => key -> {}, lockValue -> {}", key, value);
             Boolean result = redisTemplate.execute((RedisConnection connection) ->
                     connection.eval(RELEASE_LOCK_LUA.getBytes(),
