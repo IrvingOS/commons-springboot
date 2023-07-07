@@ -4,10 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 /**
- * 分页请求
+ * 分页请求体
  *
  * @author TimeChaser
  * @version 1.0
@@ -17,7 +16,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder(toBuilder = true)
 public class PageRequest extends BaseRequest {
 
     private static final long serialVersionUID = -7859444924246432002L;

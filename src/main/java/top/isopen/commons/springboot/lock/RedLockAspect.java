@@ -10,6 +10,13 @@ import top.isopen.commons.logging.LogFactory;
 import top.isopen.commons.springboot.enums.BaseErrorEnum;
 import top.isopen.commons.springboot.lock.annotation.RedLock;
 
+/**
+ * {@link RedLock} 的切面
+ *
+ * @author TimeChaser
+ * @version 1.0
+ * @since 2023/7/7 17:42
+ */
 @Aspect
 public class RedLockAspect {
 

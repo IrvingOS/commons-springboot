@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import java.util.List;
 
 /**
+ * 分页响应体
+ *
  * @author TimeChaser
  * @version 1.0
  * @since 2023/5/10 16:15

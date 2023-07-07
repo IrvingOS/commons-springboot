@@ -2,11 +2,15 @@ package top.isopen.commons.springboot.util;
 
 import top.isopen.commons.logging.Log;
 import top.isopen.commons.logging.LogFactory;
-import top.isopen.commons.springboot.support.SFunction;
+import top.isopen.commons.springboot.repository.support.SFunction;
 
 import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 数据库字段工具类
@@ -51,6 +55,18 @@ public class FieldUtil {
             }
         }
         return null;
+    }
+
+    public static List<Field> resolveDeclaredField(Class<?> clazz) {
+        Field[] fields = clazz.getDeclaredFields();
+        List<Field> result = new ArrayList<>(Arrays.asList(fields));
+
+        Class<?> superclass = clazz.getSuperclass();
+        if (!Object.class.equals(superclass)) {
+            result.addAll(resolveDeclaredField(superclass));
+        }
+
+        return result;
     }
 
 }

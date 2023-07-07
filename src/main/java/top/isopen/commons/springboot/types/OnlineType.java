@@ -6,6 +6,13 @@ import lombok.experimental.SuperBuilder;
 import top.isopen.commons.springboot.enums.OnlineStatusEnum;
 import top.isopen.commons.springboot.model.BaseModel;
 
+/**
+ * 在线的类型
+ *
+ * @author TimeChaser
+ * @version 1.0
+ * @since 2023/7/7 17:46
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder(toBuilder = true)

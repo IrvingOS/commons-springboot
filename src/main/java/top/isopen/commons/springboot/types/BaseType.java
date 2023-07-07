@@ -7,6 +7,13 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.Date;
 
+/**
+ * 基础类型
+ *
+ * @author TimeChaser
+ * @version 1.0
+ * @since 2023/7/7 17:46
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

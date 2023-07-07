@@ -24,7 +24,7 @@ public class Order extends AbstractType<Order, OrderModel> {
     private String status;
 
     @Override
-    public OrderModel toPO() {
+    public OrderModel toModel() {
         return OrderModel.builder()
                 .orderId(this.getOrderId() != null ? this.getOrderId().getValue() : null)
                 .transactionId(this.getTransactionId())

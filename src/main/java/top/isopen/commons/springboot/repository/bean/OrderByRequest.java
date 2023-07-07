@@ -1,10 +1,10 @@
-package top.isopen.commons.springboot.bean;
+package top.isopen.commons.springboot.repository.bean;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import top.isopen.commons.springboot.bean.BaseRequest;
 
 /**
  * 排序请求
@@ -17,7 +17,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder(toBuilder = true)
 public class OrderByRequest extends BaseRequest {
 
     private static final long serialVersionUID = -7859444924246432002L;

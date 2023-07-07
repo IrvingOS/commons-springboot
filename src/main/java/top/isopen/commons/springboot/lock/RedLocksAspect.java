@@ -13,6 +13,13 @@ import top.isopen.commons.springboot.lock.annotation.RedLocks;
 
 import java.util.Arrays;
 
+/**
+ * {@link RedLocks} 的切面
+ *
+ * @author TimeChaser
+ * @version 1.0
+ * @since 2023/7/7 17:42
+ */
 @Aspect
 public class RedLocksAspect {
 

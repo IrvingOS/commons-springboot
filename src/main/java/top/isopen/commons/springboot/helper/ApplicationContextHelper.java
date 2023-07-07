@@ -7,6 +7,8 @@ import org.springframework.lang.Nullable;
 import top.isopen.commons.springboot.enums.BaseErrorEnum;
 
 /**
+ * 应用上下文
+ *
  * @author TimeChaser
  * @version 1.0
  * @since 2023/5/19 16:35

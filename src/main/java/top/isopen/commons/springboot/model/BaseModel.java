@@ -10,6 +10,10 @@ import java.util.Date;
 
 
 /**
+ * 基础 Model 层
+ * <p>
+ * 包含基础字段
+ *
  * @author TimeChaser
  * @version 1.0
  * @since 2023/5/10 16:15

@@ -2,9 +2,10 @@ package top.isopen.commons.springboot.bean;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.http.HttpStatus;
 
 /**
+ * 通用结果响应体
+ * <p>
  * 序列化依赖 getter 函数，不依赖构造函数
  * <p>
  * 所以此处的注解只需使用 @Data
@@ -21,61 +22,79 @@ public class Result<T> extends BaseResponse {
 
     private static final long serialVersionUID = 2774312271443025267L;
 
-    private int code = 0;
-    private String message = "success";
+    private static final int SUCCESS_CODE = 0;
+
+    private int code;
+    private String message;
+    private String description;
     private T data;
 
+    private static <T> Builder<T> builder() {
+        return new Builder<>();
+    }
+
     public static Result<?> ok() {
-        return new Result<>();
+        return Result.builder()
+                .code(SUCCESS_CODE)
+                .build();
     }
 
     public static <T> Result<T> ok(T data) {
-        Result<T> result = new Result<>();
-        result.setData(data);
-        return result;
+        return Result.<T>builder()
+                .code(SUCCESS_CODE)
+                .data(data)
+                .build();
     }
 
-    public static <T> Result<T> ok(int code, T data) {
-        Result<T> result = new Result<>();
-        result.setCode(code);
-        result.setData(data);
-        return result;
+    public static <T> Result<T> ok(String message, String description, T data) {
+        return Result.<T>builder()
+                .code(SUCCESS_CODE)
+                .message(message)
+                .description(description)
+                .data(data)
+                .build();
     }
 
-    public static <T> Result<T> ok(int code, String message, T data) {
-        Result<T> result = new Result<>();
-        result.setCode(code);
-        result.setMessage(message);
-        result.setData(data);
-        return result;
+    public static <T> Result<T> error(int code, String message, String description) {
+        return Result.<T>builder()
+                .code(code)
+                .message(message)
+                .description(description)
+                .build();
     }
 
-    public static <T> Result<T> error() {
-        Result<T> result = new Result<>();
-        result.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        result.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
-        return result;
-    }
+    private static class Builder<T> {
 
-    public static <T> Result<T> error(int code) {
-        Result<T> result = new Result<>();
-        result.setCode(code);
-        return result;
-    }
+        private final Result<T> result;
 
-    public static <T> Result<T> error(int code, String message) {
-        Result<T> result = new Result<>();
-        result.setCode(code);
-        result.setMessage(message);
-        return result;
-    }
+        Builder() {
+            this.result = new Result<>();
+        }
 
-    public static <T> Result<T> error(int code, String message, T data) {
-        Result<T> result = new Result<>();
-        result.setCode(code);
-        result.setMessage(message);
-        result.setData(data);
-        return result;
+        private Result<T> build() {
+            return result;
+        }
+
+        private Builder<T> code(int code) {
+            result.code = code;
+            return this;
+        }
+
+        private Builder<T> message(String message) {
+            result.message = message;
+            return this;
+        }
+
+        private Builder<T> description(String description) {
+            result.description = description;
+            return this;
+        }
+
+        private Builder<T> data(T data) {
+            result.data = data;
+            return this;
+        }
+
     }
 
 }

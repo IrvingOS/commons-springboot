@@ -9,7 +9,7 @@ package top.isopen.commons.springboot.enums;
  */
 public enum OnlineStatusEnum {
 
-    ONLINE("online"), OFFLINE("offline");
+    ONLINE("online", "上架"), OFFLINE("offline", "下架");
 
     private static final OnlineStatusEnum[] VALUES;
 
@@ -18,9 +18,11 @@ public enum OnlineStatusEnum {
     }
 
     private final String value;
+    private final String description;
 
-    OnlineStatusEnum(String value) {
+    OnlineStatusEnum(String value, String description) {
         this.value = value;
+        this.description = description;
     }
 
     /**
@@ -30,16 +32,22 @@ public enum OnlineStatusEnum {
      * @return Object
      **/
     public static OnlineStatusEnum resolve(String value) {
+        String valueLowerCase = value.toLowerCase();
         for (OnlineStatusEnum onlineStatusEnum : VALUES) {
-            if (onlineStatusEnum.value.equals(value)) {
+            if (onlineStatusEnum.value.equals(valueLowerCase)) {
                 return onlineStatusEnum;
             }
         }
+        BaseErrorEnum.INVALID_ONLINE_TYPE_ERROR.throwException();
         return OFFLINE;
     }
 
     public String getValue() {
         return value;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
 }

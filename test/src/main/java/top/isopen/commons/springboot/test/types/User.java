@@ -11,7 +11,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class User implements Serializable {
 
-    private Long userId;
-    private Long tenantId;
+    private String userId;
+    private String tenantId;
 
 }

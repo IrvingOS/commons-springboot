@@ -6,6 +6,8 @@ import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
 
 /**
+ * 密码工具类
+ *
  * @author TimeChaser
  * @version 1.0
  * @since 2023/7/5 8:14

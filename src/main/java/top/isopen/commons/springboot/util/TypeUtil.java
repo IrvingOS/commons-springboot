@@ -7,6 +7,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
+ * 类型工具类
+ *
  * @author TimeChaser
  * @version 1.0
  * @since 2023/5/25 15:03

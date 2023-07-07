@@ -5,6 +5,13 @@ import top.isopen.commons.springboot.model.BaseModel;
 
 import java.util.Date;
 
+/**
+ * 抽象类型
+ *
+ * @author TimeChaser
+ * @version 1.0
+ * @since 2023/7/7 17:46
+ */
 @SuperBuilder(toBuilder = true)
 public abstract class AbstractType<T extends BaseType, R extends BaseModel> extends BaseType {
 
@@ -16,7 +23,7 @@ public abstract class AbstractType<T extends BaseType, R extends BaseModel> exte
         this.setUpdateTime(new Date());
     }
 
-    public abstract R toPO();
+    public abstract R toModel();
 
     public abstract void updateAll(T current);
 

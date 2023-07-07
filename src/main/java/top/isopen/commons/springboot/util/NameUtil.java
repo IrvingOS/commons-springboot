@@ -3,6 +3,13 @@ package top.isopen.commons.springboot.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 命名工具类
+ *
+ * @author TimeChaser
+ * @version 1.0
+ * @since 2023/7/7 17:48
+ */
 public class NameUtil {
 
     /**

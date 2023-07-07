@@ -14,6 +14,15 @@ import top.isopen.commons.springboot.lock.annotation.RedLocks;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 锁的参数
+ * <p>
+ * 用来处理锁注解 {@link RedLock} {@link RedLocks} 中配置的锁参数
+ *
+ * @author TimeChaser
+ * @version 1.0
+ * @since 2023/7/7 17:41
+ */
 @Value
 public class LockParameter {
 
