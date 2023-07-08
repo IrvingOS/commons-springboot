@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>commons-springboot</artifactId>
     <groupId>top.isopen.commons</groupId>
-    <version>1.0.9</version>
+    <version>1.1.0</version>
 
     <name>commons-springboot</name>
     <description>集成常用 Springboot 基础设施</description>
@@ -58,6 +58,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>2.7.4</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>5.3.23</version>
             <scope>compile</scope>
         </dependency>
 
