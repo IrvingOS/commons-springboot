@@ -24,12 +24,20 @@ import java.util.List;
  * 提供基础条件查询（{@link QueryField}）、复杂条件查询（{@link Query}、{@link QueryList}）以及排序查询（{@link OrderBy}、{@link OrderByList}）动态支持
  * <p>
  * 简化了复杂查询的组合
+ * <p>
+ * TODO 对 @OrderByField 的支持，考虑性能影响与使用场景，提供 bool 参数选择
+ * <p>
+ * TODO 对 Query、OrderBy 字段的保留字转义处理
  *
  * @author TimeChaser
  * @version 1.0
  * @since 2023/7/7 15:22
  */
 public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends AbstractModel<R, ?>> {
+
+    protected final LambdaQueryWrapper<R> queryWrapper(T query, boolean inOrder) {
+        return null;
+    }
 
     /**
      * 普通条件查询与排序查询的组合查询
@@ -58,6 +66,10 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
         return this.queryWrapper(query, orderByList != null ? orderByList.getValue() : null);
     }
 
+    protected final LambdaQueryWrapper<R> queryWrapper(QueryList<T> queryList, boolean inOrder) {
+        return null;
+    }
+
     /**
      * 复杂条件查询与排序查询的组合查询
      *
@@ -69,7 +81,8 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
      */
     @SafeVarargs
     protected final LambdaQueryWrapper<R> queryWrapper(QueryList<T> queryList, OrderBy<T>... orderByList) {
-        return queryWrapper(queryList, orderByList != null ? OrderByList.<T>builder().orderBy(orderByList).build() : null);
+        return queryWrapper(queryList,
+                orderByList != null ? OrderByList.<T>builder().orderBy(orderByList).build() : null);
     }
 
     /**
@@ -82,7 +95,8 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
      * @since 2023/7/7 15:37
      */
     protected final LambdaQueryWrapper<R> queryWrapper(QueryList<T> queryList, OrderByList<T> orderByList) {
-        return this.queryWrapper(queryList != null ? queryList.getValue() : null, orderByList != null ? orderByList.getValue() : null);
+        return this.queryWrapper(queryList != null ? queryList.getValue() : null,
+                orderByList != null ? orderByList.getValue() : null);
     }
 
     private LambdaQueryWrapper<R> queryWrapper(T query, List<OrderBy<T>> orderByList) {
@@ -94,9 +108,7 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
         }
         if (orderByList != null) {
             List<OrderBy<R>> transformedOrderByList = TypeUtil.transform(orderByList,
-                    orderBy -> OrderBy.<R>builder()
-                            .asc(orderBy.isAsc(), orderBy.getColumn())
-                            .build());
+                    orderBy -> OrderBy.<R>builder().asc(orderBy.isAsc(), orderBy.getColumn()).build());
             fillOrderBy(queryWrapper, transformedOrderByList);
         }
 
@@ -117,9 +129,7 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
         }
         if (orderByList != null) {
             List<OrderBy<R>> transformedOrderByList = TypeUtil.transform(orderByList,
-                    orderBy -> OrderBy.<R>builder()
-                            .asc(orderBy.isAsc(), orderBy.getColumn())
-                            .build());
+                    orderBy -> OrderBy.<R>builder().asc(orderBy.isAsc(), orderBy.getColumn()).build());
             fillOrderBy(queryWrapper, transformedOrderByList);
         }
 
@@ -142,15 +152,18 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
                 if (value != null) {
                     QueryField queryField = field.getAnnotation(QueryField.class);
                     QueryTypeEnum type = queryField.type();
-                    result.add(Query.<R>builder()
-                            .type(type)
-                            .column(field.getName())
-                            .value(value)
-                            .build());
+                    result.add(Query.<R>builder().type(type).column(field.getName()).value(value).build());
                 }
             }
         }
         return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<OrderBy<R>> resolveOrderBy(T query) {
+        R model = (R) query.toModel();
+        Class<R> clazz = (Class<R>) model.getClass();
+        return null;
     }
 
     private void fillQuery(QueryWrapper<R> queryWrapper, List<Query<R>> queryList) {

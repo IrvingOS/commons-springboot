@@ -23,6 +23,9 @@ public abstract class AbstractType<T extends BaseType, R extends BaseModel> exte
         this.setUpdateTime(new Date());
     }
 
+    /**
+     * TODO 考虑对 toModel 方法的简化
+     */
     public abstract R toModel();
 
     public abstract void updateAll(T current);

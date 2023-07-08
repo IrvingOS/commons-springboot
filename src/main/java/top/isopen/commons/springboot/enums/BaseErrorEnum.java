@@ -16,8 +16,9 @@ public enum BaseErrorEnum {
     INVALID_PAGE_SIZE_ERROR(2, "invalid page size", "", HttpStatus.BAD_REQUEST),
     INVALID_ONLINE_TYPE_ERROR(3, "invalid online type", "", HttpStatus.BAD_REQUEST),
     INVALID_ORDER_BY_COLUMN_ERROR(4, "invalid order by column", "", HttpStatus.BAD_REQUEST),
-    INVALID_QUERY_COLUMN_ERROR(5, "invalid query column", "", HttpStatus.BAD_REQUEST),
-    INVALID_QUERY_TYPE_ERROR(6, "invalid query type", "", HttpStatus.BAD_REQUEST),
+    INVALID_ORDER_BY_TYPE_ERROR(5, "invalid order by type", "", HttpStatus.BAD_REQUEST),
+    INVALID_QUERY_COLUMN_ERROR(6, "invalid query column", "", HttpStatus.BAD_REQUEST),
+    INVALID_QUERY_TYPE_ERROR(7, "invalid query type", "", HttpStatus.BAD_REQUEST),
 
     INVALID_PRIMARY_ID_ERROR(501, "invalid model primary id", "", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_APPLICATION_CONTEXT_ERROR(502, "invalid application context", "", HttpStatus.INTERNAL_SERVER_ERROR),

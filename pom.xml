@@ -97,6 +97,21 @@
             <artifactId>redisson-spring-boot-starter</artifactId>
             <version>3.22.1</version>
             <scope>compile</scope>
+            <!-- 排除 redisson-spring-boot-starter 中包含的 redisson-spring-data-31 版本 -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.redisson</groupId>
+                    <artifactId>redisson-spring-data-31</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- 使用适合于 springboot v2.7.x 的 redisson-spring-data-27 版本 -->
+        <!-- 见 https://github.com/redisson/redisson/tree/master/redisson-spring-data -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-data-27</artifactId>
+            <version>3.22.1</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Aspectj -->
