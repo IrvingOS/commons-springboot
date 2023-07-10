@@ -23,5 +23,6 @@ public class OrderByRequest extends BaseRequest {
 
     private String column;
     private boolean asc;
+    private int order = -1;
 
 }

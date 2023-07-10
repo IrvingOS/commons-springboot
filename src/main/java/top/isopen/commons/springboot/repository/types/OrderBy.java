@@ -21,10 +21,11 @@ public class OrderBy<T> {
     private SFunction<T, ?> columnFunc;
     private Column column;
     private boolean asc;
+    private int order;
 
     public static <T> OrderBy<T> resolve(OrderByRequest orderByRequest) {
         return OrderBy.<T>builder()
-                .asc(orderByRequest.isAsc(), orderByRequest.getColumn())
+                .asc(orderByRequest.isAsc(), orderByRequest.getColumn(), orderByRequest.getOrder())
                 .build();
     }
 
@@ -38,6 +39,10 @@ public class OrderBy<T> {
 
     public boolean isAsc() {
         return asc;
+    }
+
+    public int getOrder() {
+        return order;
     }
 
     @Override
@@ -80,9 +85,24 @@ public class OrderBy<T> {
             return this;
         }
 
+        public Builder<T> asc(boolean asc, SFunction<T, ?> columnFunc, int order) {
+            orderBy.asc = asc;
+            orderBy.columnFunc = columnFunc;
+            orderBy.column = new Column(FieldUtil.resolveName(columnFunc));
+            orderBy.order = order;
+            return this;
+        }
+
         public Builder<T> asc(boolean asc, String column) {
             orderBy.asc = asc;
             orderBy.column = new Column(NameUtil.humpToUnderline(column));
+            return this;
+        }
+
+        public Builder<T> asc(boolean asc, String column, int order) {
+            orderBy.asc = asc;
+            orderBy.column = new Column(NameUtil.humpToUnderline(column));
+            orderBy.order = order;
             return this;
         }
 

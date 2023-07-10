@@ -46,4 +46,8 @@ public enum OrderByTypeEnum {
         return description;
     }
 
+    public boolean isAsc() {
+        return this.equals(ASC);
+    }
+
 }
