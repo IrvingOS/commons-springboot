@@ -197,6 +197,8 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
                 queryWrapper.lt(column, value);
             } else if (queryType == QueryTypeEnum.GT) {
                 queryWrapper.gt(column, value);
+            } else if (queryType == QueryTypeEnum.NOT_IN) {
+                queryWrapper.notIn(column, value);
             }
         }
     }

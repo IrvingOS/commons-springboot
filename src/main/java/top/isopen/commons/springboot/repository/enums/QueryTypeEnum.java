@@ -19,6 +19,7 @@ public enum QueryTypeEnum {
     GE("ge", "大于等于"),
     LT("lt", "小于"),
     GT("gt", "大于"),
+    NOT_IN("gt", "大于"),
     ;
 
     private static final QueryTypeEnum[] VALUES;
