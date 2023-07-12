@@ -40,7 +40,6 @@ public class RedisHelper {
     public final TimeUnit DEFAULT_TIMEOUT_UNIT = TimeUnit.SECONDS;
     private final Log log = LogFactory.getLog(RedisHelper.class);
 
-    // ====================== key 相关操作 ======================
     /**
      * 使用 StringRedisTemplate（其是 RedisTemplate 的定制化升级）
      */
@@ -58,6 +57,8 @@ public class RedisHelper {
     public RedisHelper(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
+
+    // ====================== key 相关操作 ======================
 
     /**
      * 根据 key, 删除 redis 中的对应 key-value
@@ -311,8 +312,6 @@ public class RedisHelper {
         return result;
     }
 
-    // ====================== string 相关操作 ======================
-
     /**
      * 从 redis 的所有 key 中，随机获取一个 key
      * <p>
@@ -383,6 +382,8 @@ public class RedisHelper {
         log.info("type(...) => result -> {}", result);
         return result;
     }
+
+    // ====================== string 相关操作 ======================
 
     /**
      * 设置 key-value
@@ -657,8 +658,6 @@ public class RedisHelper {
         return result;
     }
 
-    // ====================== hash 相关操作 ======================
-
     /**
      * 对（key 对应的）value 进行截取, 截取范围为 [start, end]
      * <p>
@@ -736,6 +735,8 @@ public class RedisHelper {
         log.info("multiGet(...) => result -> {}", result);
         return result;
     }
+
+    // ====================== hash 相关操作 ======================
 
     /**
      * 向 key 对应的 hash 中，增加一个键值对 entryKey-entryValue
@@ -931,16 +932,6 @@ public class RedisHelper {
         return result;
     }
 
-    // ====================== list 相关操作 ======================
-
-    //     提示: 列表中的元素，可以重复。
-    //     提示: list是有序的。
-    //     提示: redis中的list中的索引，可分为两类,这两类都可以用来定位list中元素:
-    //     类别一: 从left到right, 是从0开始依次增大:   0,  1,  2,  3...
-    //     类别二: 从right到left, 是从-1开始依次减小: -1, -2, -3, -4...
-    //     提示: redis中String的数据结构可参考resources/data-structure/List(列表)的数据结构(示例一).png
-    //     redis中String的数据结构可参考resources/data-structure/List(列表)的数据结构(示例二).png
-
     /**
      * 获取(key对应的)hash中的所有entryKey
      * <p>
@@ -1013,6 +1004,16 @@ public class RedisHelper {
         log.info("hScan(...) => cursor -> {}", JSON.toJSONString(cursor));
         return cursor;
     }
+
+    // ====================== list 相关操作 ======================
+
+    //     提示: 列表中的元素，可以重复。
+    //     提示: list是有序的。
+    //     提示: redis中的list中的索引，可分为两类,这两类都可以用来定位list中元素:
+    //     类别一: 从left到right, 是从0开始依次增大:   0,  1,  2,  3...
+    //     类别二: 从right到left, 是从-1开始依次减小: -1, -2, -3, -4...
+    //     提示: redis中String的数据结构可参考resources/data-structure/List(列表)的数据结构(示例一).png
+    //     redis中String的数据结构可参考resources/data-structure/List(列表)的数据结构(示例二).png
 
     /**
      * 从左端推入元素进列表
@@ -1344,13 +1345,6 @@ public class RedisHelper {
         return result;
     }
 
-    // ====================== set 相关操作 ======================
-
-    //      提示: set中的元素，不可以重复。
-    //      提示: set是无序的。
-    //      提示: redis中String的数据结构可参考resources/data-structure/Set(集合)的数据结构(示例一).png
-    //      redis中String的数据结构可参考resources/data-structure/Set(集合)的数据结构(示例二).png
-
     /**
      * 获取(key对应的)list
      *
@@ -1430,6 +1424,13 @@ public class RedisHelper {
         log.info("lTrim(...) => key -> {}, start -> {}, end -> {}", key, start, end);
         redisTemplate.opsForList().trim(key, start, end);
     }
+
+    // ====================== set 相关操作 ======================
+
+    //      提示: set中的元素，不可以重复。
+    //      提示: set是无序的。
+    //      提示: redis中String的数据结构可参考resources/data-structure/Set(集合)的数据结构(示例一).png
+    //      redis中String的数据结构可参考resources/data-structure/Set(集合)的数据结构(示例二).png
 
     /**
      * 向(key对应的)set中添加items
@@ -1825,16 +1826,6 @@ public class RedisHelper {
         return members;
     }
 
-    // ====================== ZSet 相关操作 ======================
-
-    //      特别说明: ZSet是有序的,
-    //      不仅体现在： redis中的存储上有序。
-    //      还体现在:   此工具类ZSetOps中返回值类型为Set<?>的方法, 实际返回类型是LinkedHashSet<?>
-    //      提示: redis中的ZSet, 一定程度等于redis中的Set + redis中的Hash的结合体。
-    //      提示: redis中String的数据结构可参考resources/data-structure/ZSet(有序集合)的数据结构(示例一).png
-    //      redis中String的数据结构可参考resources/data-structure/ZSet(有序集合)的数据结构(示例二).png
-    //      提示: ZSet中的entryKey即为成员项， entryValue即为这个成员项的分值, ZSet根据成员的分值，来堆成员进行排序。
-
     /**
      * 从key对应的set中随机获取一项
      *
@@ -1910,6 +1901,16 @@ public class RedisHelper {
         log.info("sScan(...) => cursor -> {}", JSON.toJSONString(cursor));
         return cursor;
     }
+
+    // ====================== ZSet 相关操作 ======================
+
+    //      特别说明: ZSet是有序的,
+    //      不仅体现在： redis中的存储上有序。
+    //      还体现在:   此工具类ZSetOps中返回值类型为Set<?>的方法, 实际返回类型是LinkedHashSet<?>
+    //      提示: redis中的ZSet, 一定程度等于redis中的Set + redis中的Hash的结合体。
+    //      提示: redis中String的数据结构可参考resources/data-structure/ZSet(有序集合)的数据结构(示例一).png
+    //      redis中String的数据结构可参考resources/data-structure/ZSet(有序集合)的数据结构(示例二).png
+    //      提示: ZSet中的entryKey即为成员项， entryValue即为这个成员项的分值, ZSet根据成员的分值，来堆成员进行排序。
 
     /**
      * 向(key对应的)zset中添加(item, score)
@@ -2418,67 +2419,6 @@ public class RedisHelper {
         return score;
     }
 
-    // ====================== 分布式锁(单机版) 相关操作 ======================
-
-    //      使用方式(示例):
-    //      boolean flag = false;
-    //      String lockName = "sichuan:mianyang:fucheng:ds";
-    //      String lockValue = UUID.randomUUID().toString();
-    //      try {
-    //      //	非阻塞获取(锁的最大存活时间采用默认值)
-    //      flag = .getLock(lockName, lockValue);
-    //      //	非阻塞获取e.g.
-    //      flag = .getLock(lockName, lockValue, 3, TimeUnit.SECONDS);
-    //      //      阻塞获取(锁的最大存活时间采用默认值)
-    //      flag = .getLockUntilTimeout(lockName, lockValue, 2000);
-    //      //      阻塞获取e.g.
-    //      flag = .getLockUntilTimeout(lockName, lockValue, 2, TimeUnit.SECONDS, 2000);
-    //      if (!flag) {
-    //      throw new RuntimeException(" obtain redis-lock[" + lockName + "] fail");
-    //      }
-    //      //      your logic
-    //      //	...
-    //      } finally {
-    //      if (flag) {
-    //      .releaseLock(lockName, lockValue);
-    //      }
-    //      }
-    //      <p>
-    //      |--------------------------------------------------------------------------------------------------------------------|
-    //      |单机版分布式锁、集群版分布式锁，特别说明:                                                                                 |
-    //      |   - 此锁是针对单机Redis的分布式锁;                                                                                    |
-    //      |   - 对于Redis集群而言, 此锁可能存在失效的情况。考虑如下情况:                                                              |
-    //      |         首先，当客户端A通过key-value(假设为key名为key123)在Master上获取到一个锁。                                        |
-    //      |         然后，Master试着把这个数据同步到Slave的时候突然挂了(此时Slave上没有该分布式锁的key123)。                            |
-    //      |         接着，Slave变成了Master。                                                                                    |
-    //      |         不巧的是，客户端B此时也一以相同的key去获取分布式锁；                                                              |
-    //      |                 因为现在的Master上没有key123代表的分布式锁，                                                            |
-    //      |                 所以客户端B此时再通过key123去获取分布式锁时，                                                            |
-    //      |                 就能获取成功。                                                                                       |
-    //      |         那么此时，客户端A和客户端B同时获取到了同一把分布式锁，分布式锁失效。                                                 |
-    //      |   - 在Redis集群模式下，如果需要严格的分布式锁的话，可使用Redlock算法来实现。Redlock算法原理简述:                              |
-    //      |     - 获取分布式锁：                                                                                                 |
-    //      |           1. 客户端获取服务器当前的的时间t0。                                                                           |
-    //      |           2. 使用相同的key和value依次向5个实例获取锁。                                                                  |
-    //      |              注:为了避免在某个redis节点耗时太久而影响到对后面的Redis节点的锁的获取;                                         |
-    //      |                 客户端在获取每一个Redis节点的锁的时候,自身需要设置一个较小的等待获取锁超时的时间,                             |
-    //      |                 一旦都在某个节点获取分布式锁的时间超过了超时时间，那么就认为在这个节点获取分布式锁失败，                        |
-    //      |                 （不把时间浪费在这一个节点上），继续获取下一个节点的分布式锁。                                              |
-    //      |           3. 客户端通过当前时间(t1)减去t0，计算(从所有redis节点)获取锁所消耗的总时间t2(注：t2=t1-t0)。                      |
-    //      |              只有t2小于锁本身的锁定时长(注:若锁的锁定时长是1小时， 假设下午一点开始上锁，那么锁会在下午两点                     |
-    //      |              的时候失效， 而你却在两点后才获取到锁，这个时候已经没意义了)，并且，客户端在至少在多半Redis                        |
-    //      |              节点上获取到锁, 我们才认为分布式锁获取成功。                                                                |
-    //      |           5. 如果锁已经获取，那么  锁的实际有效时长 = 锁的总有效时长 - 获取分布式锁所消耗的时长; 锁的实际有效时长 应保证 > 0。    |
-    //      |              注: 也就是说， 如果获取锁失败，那么                                                                        |
-    //      |                  A. 可能是   获取到的锁的个数，不满足大多数原则。                                                         |
-    //      |                  B. 也可能是 锁的实际有效时长不大于0。                                                                  |
-    //      |      - 释放分布式锁： 在每个redis节点上试着删除锁(, 不论有没有在该节点上获取到锁)。                                          |
-    //      |   - 集群下的分布式锁，可直接使用现有类库<a href="https://github.com/redisson/redisson"/>                                |
-    //      |                                                                                                                    |
-    //      |   注: 如果Redis集群项目能够容忍master宕机导致单机版分布式锁失效的情况的话，那么是直接使用单机版分布式锁在Redis集群的项目中的；     |
-    //      |       如果Redis集群项目不能容忍单机版分布式锁失效的情况的话，那么请使用基于RedLock算法的集群版分布式锁；                        |
-    //      |--------------------------------------------------------------------------------------------------------------------|
-
     /**
      * 获取两个(key对应的)ZSet的并集, 并将结果add到storeKey对应的ZSet中。
      * <p>
@@ -2586,6 +2526,67 @@ public class RedisHelper {
         }
         return size;
     }
+
+    // ====================== 分布式锁(单机版) 相关操作 ======================
+
+    //      使用方式(示例):
+    //      boolean flag = false;
+    //      String lockName = "sichuan:mianyang:fucheng:ds";
+    //      String lockValue = UUID.randomUUID().toString();
+    //      try {
+    //      //	非阻塞获取(锁的最大存活时间采用默认值)
+    //      flag = .getLock(lockName, lockValue);
+    //      //	非阻塞获取e.g.
+    //      flag = .getLock(lockName, lockValue, 3, TimeUnit.SECONDS);
+    //      //      阻塞获取(锁的最大存活时间采用默认值)
+    //      flag = .getLockUntilTimeout(lockName, lockValue, 2000);
+    //      //      阻塞获取e.g.
+    //      flag = .getLockUntilTimeout(lockName, lockValue, 2, TimeUnit.SECONDS, 2000);
+    //      if (!flag) {
+    //      throw new RuntimeException(" obtain redis-lock[" + lockName + "] fail");
+    //      }
+    //      //      your logic
+    //      //	...
+    //      } finally {
+    //      if (flag) {
+    //      .releaseLock(lockName, lockValue);
+    //      }
+    //      }
+    //      <p>
+    //      |--------------------------------------------------------------------------------------------------------------------|
+    //      |单机版分布式锁、集群版分布式锁，特别说明:                                                                                 |
+    //      |   - 此锁是针对单机Redis的分布式锁;                                                                                    |
+    //      |   - 对于Redis集群而言, 此锁可能存在失效的情况。考虑如下情况:                                                              |
+    //      |         首先，当客户端A通过key-value(假设为key名为key123)在Master上获取到一个锁。                                        |
+    //      |         然后，Master试着把这个数据同步到Slave的时候突然挂了(此时Slave上没有该分布式锁的key123)。                            |
+    //      |         接着，Slave变成了Master。                                                                                    |
+    //      |         不巧的是，客户端B此时也一以相同的key去获取分布式锁；                                                              |
+    //      |                 因为现在的Master上没有key123代表的分布式锁，                                                            |
+    //      |                 所以客户端B此时再通过key123去获取分布式锁时，                                                            |
+    //      |                 就能获取成功。                                                                                       |
+    //      |         那么此时，客户端A和客户端B同时获取到了同一把分布式锁，分布式锁失效。                                                 |
+    //      |   - 在Redis集群模式下，如果需要严格的分布式锁的话，可使用Redlock算法来实现。Redlock算法原理简述:                              |
+    //      |     - 获取分布式锁：                                                                                                 |
+    //      |           1. 客户端获取服务器当前的的时间t0。                                                                           |
+    //      |           2. 使用相同的key和value依次向5个实例获取锁。                                                                  |
+    //      |              注:为了避免在某个redis节点耗时太久而影响到对后面的Redis节点的锁的获取;                                         |
+    //      |                 客户端在获取每一个Redis节点的锁的时候,自身需要设置一个较小的等待获取锁超时的时间,                             |
+    //      |                 一旦都在某个节点获取分布式锁的时间超过了超时时间，那么就认为在这个节点获取分布式锁失败，                        |
+    //      |                 （不把时间浪费在这一个节点上），继续获取下一个节点的分布式锁。                                              |
+    //      |           3. 客户端通过当前时间(t1)减去t0，计算(从所有redis节点)获取锁所消耗的总时间t2(注：t2=t1-t0)。                      |
+    //      |              只有t2小于锁本身的锁定时长(注:若锁的锁定时长是1小时， 假设下午一点开始上锁，那么锁会在下午两点                     |
+    //      |              的时候失效， 而你却在两点后才获取到锁，这个时候已经没意义了)，并且，客户端在至少在多半Redis                        |
+    //      |              节点上获取到锁, 我们才认为分布式锁获取成功。                                                                |
+    //      |           5. 如果锁已经获取，那么  锁的实际有效时长 = 锁的总有效时长 - 获取分布式锁所消耗的时长; 锁的实际有效时长 应保证 > 0。    |
+    //      |              注: 也就是说， 如果获取锁失败，那么                                                                        |
+    //      |                  A. 可能是   获取到的锁的个数，不满足大多数原则。                                                         |
+    //      |                  B. 也可能是 锁的实际有效时长不大于0。                                                                  |
+    //      |      - 释放分布式锁： 在每个redis节点上试着删除锁(, 不论有没有在该节点上获取到锁)。                                          |
+    //      |   - 集群下的分布式锁，可直接使用现有类库<a href="https://github.com/redisson/redisson"/>                                |
+    //      |                                                                                                                    |
+    //      |   注: 如果Redis集群项目能够容忍master宕机导致单机版分布式锁失效的情况的话，那么是直接使用单机版分布式锁在Redis集群的项目中的；     |
+    //      |       如果Redis集群项目不能容忍单机版分布式锁失效的情况的话，那么请使用基于RedLock算法的集群版分布式锁；                        |
+    //      |--------------------------------------------------------------------------------------------------------------------|
 
     /**
      * 获取(分布式)锁.

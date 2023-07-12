@@ -86,7 +86,8 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
 
         List<Query<R>> queryList = fieldList != null ? resolveQuery(model, fieldList) : null;
         List<OrderBy<R>> transformedOrderByList = orderByList != null ? TypeUtil.transform(orderByList.getValue(),
-                orderBy -> OrderBy.<R>builder().asc(orderBy.isAsc(), orderBy.getColumn()).build()) : null;
+                orderBy -> OrderBy.<R>builder().asc(orderBy.isAsc(), orderBy.getColumn()).build()) :
+                null;
 
         return queryWrapper(queryList, transformedOrderByList);
     }
@@ -123,7 +124,8 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
                         .value(query.getValue())
                         .build()) : null;
         List<OrderBy<R>> transformedOrderByList = orderByList != null ? TypeUtil.transform(orderByList.getValue(),
-                orderBy -> OrderBy.<R>builder().asc(orderBy.isAsc(), orderBy.getColumn()).build()) : null;
+                orderBy -> OrderBy.<R>builder().asc(orderBy.isAsc(), orderBy.getColumn()).build()) :
+                null;
 
         return this.queryWrapper(transformedQueryList, transformedOrderByList);
     }
@@ -170,7 +172,6 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
                 result.add(OrderBy.<R>builder().asc(type.isAsc(), field.getName(), order).build());
             }
         }
-        result.sort(Comparator.comparingInt(OrderBy::getOrder));
         return result;
     }
 
@@ -201,6 +202,7 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
     }
 
     private void fillOrderBy(QueryWrapper<R> queryWrapper, List<OrderBy<R>> orderByList) {
+        orderByList.sort(Comparator.comparingInt(OrderBy::getOrder));
         for (OrderBy<R> orderBy : orderByList) {
             queryWrapper.orderBy(true, orderBy.isAsc(), escapeColumn(orderBy.getColumn()));
         }
