@@ -36,3 +36,10 @@ spring:
       idle-timeout: 600000
       connection-timeout: 30000
       max-lifetime: 1800000
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-prefix: mybatis-plus
+logging:
+  level:
+    top.isopen.commons.springboot.test.dao: debug

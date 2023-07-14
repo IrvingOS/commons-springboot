@@ -4,6 +4,8 @@ import top.isopen.commons.springboot.enums.BaseErrorEnum;
 
 /**
  * 查询类型枚举
+ * <p>
+ * TODO 支持 AND 操作
  *
  * @author TimeChaser
  * @version 1.0
@@ -14,12 +16,14 @@ public enum QueryTypeEnum {
     EQ("eq", "等于"),
     LIKE("like", "像"),
     OR("or", "或者"),
+    AND("and", "并且"),
     NE("ne", "不等于"),
     LE("le", "小于等于"),
     GE("ge", "大于等于"),
     LT("lt", "小于"),
     GT("gt", "大于"),
-    NOT_IN("gt", "大于"),
+    IN("in", "备选"),
+    NOT_IN("notin", "排除"),
     ;
 
     private static final QueryTypeEnum[] VALUES;

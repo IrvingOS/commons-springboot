@@ -15,6 +15,8 @@ import top.isopen.commons.springboot.util.NameUtil;
  */
 public class Query<T> {
 
+    private static final String COLUMN_PLACEHOLDER = "UNKNOWN_COLUMN";
+
     private QueryTypeEnum type;
     private SFunction<T, ?> columnFunc;
     private Column column;
@@ -78,7 +80,7 @@ public class Query<T> {
         }
 
         public Builder<T> column(String column) {
-            query.column = new Column(NameUtil.humpToUnderline(column));
+            query.column = new Column(column == null || column.length() == 0 ? COLUMN_PLACEHOLDER : NameUtil.humpToUnderline(column));
             return this;
         }
 

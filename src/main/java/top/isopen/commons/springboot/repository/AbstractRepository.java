@@ -3,6 +3,8 @@ package top.isopen.commons.springboot.repository;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.SneakyThrows;
+import top.isopen.commons.logging.Log;
+import top.isopen.commons.logging.LogFactory;
 import top.isopen.commons.springboot.model.AbstractModel;
 import top.isopen.commons.springboot.repository.annotation.OrderByField;
 import top.isopen.commons.springboot.repository.annotation.QueryField;
@@ -33,6 +35,8 @@ import java.util.List;
  * @since 2023/7/7 15:22
  */
 public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends AbstractModel<R, ?>> {
+
+    private static final Log log = LogFactory.getLog(AbstractRepository.class);
 
     /**
      * 注解式条件查询与注解式排序查询的组合查询
@@ -181,13 +185,17 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
             String column = escapeColumn(queryEntity.getColumn());
             Object value = queryEntity.getValue();
 
+            if (log.isDebugEnabled()) {
+                log.info("query type: {}, column: {}, value: {}", queryType, column, value);
+            }
+
             if (queryType == QueryTypeEnum.EQ) {
                 queryWrapper.eq(column, value);
             } else if (queryType == QueryTypeEnum.LIKE) {
                 queryWrapper.like(column, value);
             } else if (queryType == QueryTypeEnum.OR) {
                 queryWrapper.or();
-            } else if (queryType == QueryTypeEnum.NE) {
+            }  else if (queryType == QueryTypeEnum.NE) {
                 queryWrapper.ne(column, value);
             } else if (queryType == QueryTypeEnum.LE) {
                 queryWrapper.le(column, value);
@@ -197,8 +205,10 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
                 queryWrapper.lt(column, value);
             } else if (queryType == QueryTypeEnum.GT) {
                 queryWrapper.gt(column, value);
+            } else if (queryType == QueryTypeEnum.IN) {
+                queryWrapper.in(column, (List<Object>) value);
             } else if (queryType == QueryTypeEnum.NOT_IN) {
-                queryWrapper.notIn(column, value);
+                queryWrapper.notIn(column, (List<Object>) value);
             }
         }
     }
@@ -206,6 +216,11 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
     private void fillOrderBy(QueryWrapper<R> queryWrapper, List<OrderBy<R>> orderByList) {
         orderByList.sort(Comparator.comparingInt(OrderBy::getOrder));
         for (OrderBy<R> orderBy : orderByList) {
+
+            if (log.isDebugEnabled()) {
+                log.info("order by column: {} {}, order: {}", orderBy.getColumn(), orderBy.isAsc(), orderBy.getOrder());
+            }
+
             queryWrapper.orderBy(true, orderBy.isAsc(), escapeColumn(orderBy.getColumn()));
         }
     }
