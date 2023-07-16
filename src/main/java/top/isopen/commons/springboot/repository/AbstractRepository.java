@@ -186,7 +186,7 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
             Object value = queryEntity.getValue();
 
             if (log.isDebugEnabled()) {
-                log.info("query type: {}, column: {}, value: {}", queryType, column, value);
+                log.debug("query type: {}, column: {}, value: {}", queryType, column, value);
             }
 
             if (queryType == QueryTypeEnum.EQ) {
@@ -218,7 +218,7 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
         for (OrderBy<R> orderBy : orderByList) {
 
             if (log.isDebugEnabled()) {
-                log.info("order by column: {} {}, order: {}", orderBy.getColumn(), orderBy.isAsc(), orderBy.getOrder());
+                log.debug("order by column: {} {}, order: {}", orderBy.getColumn(), orderBy.isAsc(), orderBy.getOrder());
             }
 
             queryWrapper.orderBy(true, orderBy.isAsc(), escapeColumn(orderBy.getColumn()));

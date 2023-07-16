@@ -29,7 +29,6 @@ public class FieldUtil {
     private static final String[] PREFIXES = new String[]{"is", "get"};
 
     public static <T> String resolveName(SFunction<T, ?> func) {
-        log.info("resolving entity name of SFunction: {}", func.toString());
         try {
             Method method = func.getClass().getDeclaredMethod(WRITE_REPLACE);
             method.setAccessible(true);
