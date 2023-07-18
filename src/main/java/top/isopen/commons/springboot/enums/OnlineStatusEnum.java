@@ -42,6 +42,10 @@ public enum OnlineStatusEnum {
         return OFFLINE;
     }
 
+    public static String resolve(OnlineStatusEnum status) {
+        return status != null ? status.getValue() : null;
+    }
+
     public String getValue() {
         return value;
     }

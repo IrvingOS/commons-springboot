@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>commons-springboot</artifactId>
     <groupId>top.isopen.commons</groupId>
-    <version>1.1.3</version>
+    <version>1.1.5</version>
 
     <name>commons-springboot</name>
     <description>集成常用 Springboot 基础设施</description>

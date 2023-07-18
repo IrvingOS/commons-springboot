@@ -12,11 +12,17 @@ import java.util.Map;
  */
 public abstract class AbstractStrategyFactory<T, R> {
 
-    protected final Map<T, R> strategyMap = new HashMap<>();
+    private final Map<T, R> strategyMap = new HashMap<>();
 
     @SuppressWarnings("unused")
     protected abstract void init();
 
-    public abstract R getStrategy(T type);
+    protected void addStrategy(T strategy, R processor) {
+        strategyMap.put(strategy, processor);
+    }
+
+    public R getStrategy(T type) {
+        return strategyMap.get(type);
+    }
 
 }
