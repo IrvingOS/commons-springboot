@@ -6,10 +6,7 @@ import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.connection.ReturnType;
-import org.springframework.data.redis.core.Cursor;
-import org.springframework.data.redis.core.ScanOptions;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.core.types.Expiration;
 import top.isopen.commons.logging.Log;
 import top.isopen.commons.logging.LogFactory;
@@ -43,7 +40,7 @@ public class RedisHelper {
     /**
      * 使用 StringRedisTemplate（其是 RedisTemplate 的定制化升级）
      */
-    private final StringRedisTemplate redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     /**
      * lua 脚本, 保证 释放锁脚本 的原子性（以避免, 并发场景下, 释放了别人的锁）
      */
@@ -54,7 +51,7 @@ public class RedisHelper {
         RELEASE_LOCK_LUA = "if redis.call('get',KEYS[1]) == ARGV[1] " + "then " + "    return redis.call('del',KEYS[1]) " + "else " + "    return 0 " + "end ";
     }
 
-    public RedisHelper(StringRedisTemplate redisTemplate) {
+    public RedisHelper(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
@@ -705,8 +702,8 @@ public class RedisHelper {
      * 注: 若 key 不存在， 则返回 null。
      * @since 2020/3/8 16:27:41
      */
-    public String get(String key) {
-        String result = redisTemplate.opsForValue().get(key);
+    public Object get(String key) {
+        Object result = redisTemplate.opsForValue().get(key);
         if (log.isDebugEnabled()) {
             log.debug("get(...) => key -> {}", key);
             log.debug("get(...) => result -> {} ", result);
@@ -746,8 +743,8 @@ public class RedisHelper {
      * @return 旧的 value 值
      * @since 2020/3/8 18:14:24
      */
-    public String getAndSet(String key, String newValue) {
-        String oldValue = redisTemplate.opsForValue().getAndSet(key, newValue);
+    public Object getAndSet(String key, String newValue) {
+        Object oldValue = redisTemplate.opsForValue().getAndSet(key, newValue);
         if (log.isDebugEnabled()) {
             log.debug("getAndSet(...) => key -> {}, value -> {}", key, newValue);
             log.debug("getAndSet(...) => oldValue -> {}", oldValue);
@@ -791,8 +788,8 @@ public class RedisHelper {
      * @return value 值集合
      * @since 2020/3/8 18:26:33
      */
-    public List<String> multiGet(Collection<String> keys) {
-        List<String> result = redisTemplate.opsForValue().multiGet(keys);
+    public List<Object> multiGet(Collection<String> keys) {
+        List<Object> result = redisTemplate.opsForValue().multiGet(keys);
         if (log.isDebugEnabled()) {
             log.debug("multiGet(...) => keys -> {}", keys);
             log.debug("multiGet(...) => result -> {}", result);
@@ -1305,8 +1302,8 @@ public class RedisHelper {
      * @return 移出的那个元素
      * @since 2020/3/9 14:33:56
      */
-    public String lLeftPop(String key) {
-        String item = redisTemplate.opsForList().leftPop(key);
+    public Object lLeftPop(String key) {
+        Object item = redisTemplate.opsForList().leftPop(key);
         if (log.isDebugEnabled()) {
             log.debug("lLeftPop(...) => key -> {}", key);
             log.debug("lLeftPop(...) => item -> {}", item);
@@ -1330,8 +1327,8 @@ public class RedisHelper {
      * @return 移出的那个元素
      * @since 2020/3/9 14:33:56
      */
-    public String lLeftPop(String key, long timeout, TimeUnit unit) {
-        String item = redisTemplate.opsForList().leftPop(key, timeout, unit);
+    public Object lLeftPop(String key, long timeout, TimeUnit unit) {
+        Object item = redisTemplate.opsForList().leftPop(key, timeout, unit);
         if (log.isDebugEnabled()) {
             log.debug("lLeftPop(...) => key -> {}, timeout -> {}, unit -> {}", key, timeout, unit);
             log.debug("lLeftPop(...) => item -> {}", item);
@@ -1342,8 +1339,8 @@ public class RedisHelper {
     /**
      * 与{@link #lLeftPop(String)}类比即可， 不过是从list右侧移出元素
      */
-    public String lRightPop(String key) {
-        String item = redisTemplate.opsForList().rightPop(key);
+    public Object lRightPop(String key) {
+        Object item = redisTemplate.opsForList().rightPop(key);
         if (log.isDebugEnabled()) {
             log.debug("lRightPop(...) => key -> {}", key);
             log.debug("lRightPop(...) => item -> {}", item);
@@ -1354,8 +1351,8 @@ public class RedisHelper {
     /**
      * 与{@link #lLeftPop(String, long, TimeUnit)}类比即可， 不过是从list右侧移出元素
      */
-    public String lRightPop(String key, long timeout, TimeUnit unit) {
-        String item = redisTemplate.opsForList().rightPop(key, timeout, unit);
+    public Object lRightPop(String key, long timeout, TimeUnit unit) {
+        Object item = redisTemplate.opsForList().rightPop(key, timeout, unit);
         if (log.isDebugEnabled()) {
             log.debug("lRightPop(...) => key -> {}, timeout -> {}, unit -> {}", key, timeout, unit);
             log.debug("lRightPop(...) => item -> {}", item);
@@ -1378,8 +1375,8 @@ public class RedisHelper {
      * @return 移动的这个元素
      * @since 2020/3/9 15:06:59
      */
-    public String lRightPopAndLeftPush(String sourceKey, String destinationKey) {
-        String item = redisTemplate.opsForList().rightPopAndLeftPush(sourceKey, destinationKey);
+    public Object lRightPopAndLeftPush(String sourceKey, String destinationKey) {
+        Object item = redisTemplate.opsForList().rightPopAndLeftPush(sourceKey, destinationKey);
         if (log.isDebugEnabled()) {
             log.debug("lRightPopAndLeftPush(...) => sourceKey -> {}, destinationKey -> {}", sourceKey, destinationKey);
             log.debug("lRightPopAndLeftPush(...) => item -> {}", item);
@@ -1405,8 +1402,8 @@ public class RedisHelper {
      * @return 移动的这个元素
      * @since 2020/3/9 15:06:59
      */
-    public String lRightPopAndLeftPush(String sourceKey, String destinationKey, long timeout, TimeUnit unit) {
-        String item = redisTemplate.opsForList().rightPopAndLeftPush(sourceKey, destinationKey, timeout, unit);
+    public Object lRightPopAndLeftPush(String sourceKey, String destinationKey, long timeout, TimeUnit unit) {
+        Object item = redisTemplate.opsForList().rightPopAndLeftPush(sourceKey, destinationKey, timeout, unit);
         if (log.isDebugEnabled()) {
             log.debug("lRightPopAndLeftPush(...) => sourceKey -> {}, destinationKey -> {}, timeout -> {}," + " unit -> {}", sourceKey, destinationKey, timeout, unit);
             log.debug("lRightPopAndLeftPush(...) => item -> {}", item);
@@ -1442,8 +1439,8 @@ public class RedisHelper {
      * @return list中索引index对应的item
      * @since 2020/3/10 0:27:23
      */
-    public String lIndex(String key, long index) {
-        String item = redisTemplate.opsForList().index(key, index);
+    public Object lIndex(String key, long index) {
+        Object item = redisTemplate.opsForList().index(key, index);
         if (log.isDebugEnabled()) {
             log.debug("lIndex(...) => key -> {}, index -> {}", key, index);
             log.debug("lIndex(...) => item -> {}", item);
@@ -1466,8 +1463,8 @@ public class RedisHelper {
      * @return 对应的元素集合
      * @since 2020/3/10 0:34:59
      */
-    public List<String> lRange(String key, long start, long end) {
-        List<String> result = redisTemplate.opsForList().range(key, start, end);
+    public List<Object> lRange(String key, long start, long end) {
+        List<Object> result = redisTemplate.opsForList().range(key, start, end);
         if (log.isDebugEnabled()) {
             log.debug("lRange(...) => key -> {}, start -> {}, end -> {}", key, start, end);
             log.debug("lRange(...) => result -> {}", result);
@@ -1483,8 +1480,8 @@ public class RedisHelper {
      * @see #lRange(String, long, long)
      * @since 2020/3/10 0:46:50
      */
-    public List<String> lWholeList(String key) {
-        List<String> result = redisTemplate.opsForList().range(key, 0, -1);
+    public List<Object> lWholeList(String key) {
+        List<Object> result = redisTemplate.opsForList().range(key, 0, -1);
         if (log.isDebugEnabled()) {
             log.debug("lWholeList(...) => key -> {}", key);
             log.debug("lWholeList(...) => result -> {}", result);
@@ -1628,8 +1625,8 @@ public class RedisHelper {
      * @return 移出的项
      * @since 2020/3/11 8:32:40
      */
-    public String sPop(String key) {
-        String popItem = redisTemplate.opsForSet().pop(key);
+    public Object sPop(String key) {
+        Object popItem = redisTemplate.opsForSet().pop(key);
         if (log.isDebugEnabled()) {
             log.debug("sPop(...) => key -> {}", key);
             log.debug("sPop(...) => popItem -> {}", popItem);
@@ -1717,8 +1714,8 @@ public class RedisHelper {
      * @return item交集
      * @since 2020/3/11 9:31:25
      */
-    public Set<String> sIntersect(String key, String otherKey) {
-        Set<String> intersectResult = redisTemplate.opsForSet().intersect(key, otherKey);
+    public Set<Object> sIntersect(String key, String otherKey) {
+        Set<Object> intersectResult = redisTemplate.opsForSet().intersect(key, otherKey);
         if (log.isDebugEnabled()) {
             log.debug("sIntersect(...) => key -> {}, otherKey -> {}", key, otherKey);
             log.debug("sIntersect(...) => intersectResult -> {}", intersectResult);
@@ -1737,8 +1734,8 @@ public class RedisHelper {
      * @return item交集
      * @since 2020/3/11 9:39:23
      */
-    public Set<String> sIntersect(String key, Collection<String> otherKeys) {
-        Set<String> intersectResult = redisTemplate.opsForSet().intersect(key, otherKeys);
+    public Set<Object> sIntersect(String key, Collection<String> otherKeys) {
+        Set<Object> intersectResult = redisTemplate.opsForSet().intersect(key, otherKeys);
         if (log.isDebugEnabled()) {
             log.debug("sIntersect(...) => key -> {}, otherKeys -> {}", key, otherKeys);
             log.debug("sIntersect(...) => intersectResult -> {}", intersectResult);
@@ -1806,8 +1803,8 @@ public class RedisHelper {
      * @return item并集
      * @since 2020/3/11 11:18:35
      */
-    public Set<String> sUnion(String key, String otherKey) {
-        Set<String> unionResult = redisTemplate.opsForSet().union(key, otherKey);
+    public Set<Object> sUnion(String key, String otherKey) {
+        Set<Object> unionResult = redisTemplate.opsForSet().union(key, otherKey);
         if (log.isDebugEnabled()) {
             log.debug("sUnion(...) => key -> {}, otherKey -> {}", key, otherKey);
             log.debug("sUnion(...) => unionResult -> {}", unionResult);
@@ -1825,8 +1822,8 @@ public class RedisHelper {
      * @return item并集
      * @since 2020/3/11 11:18:35
      */
-    public Set<String> sUnion(String key, Collection<String> otherKeys) {
-        Set<String> unionResult = redisTemplate.opsForSet().union(key, otherKeys);
+    public Set<Object> sUnion(String key, Collection<String> otherKeys) {
+        Set<Object> unionResult = redisTemplate.opsForSet().union(key, otherKeys);
         if (log.isDebugEnabled()) {
             log.debug("sUnion(...) => key -> {}, otherKeys -> {}", key, otherKeys);
             log.debug("sUnion(...) => unionResult -> {}", unionResult);
@@ -1899,8 +1896,8 @@ public class RedisHelper {
      * @return item差集
      * @since 2020/3/11 14:03:57
      */
-    public Set<String> sDifference(String key, String otherKey) {
-        Set<String> differenceResult = redisTemplate.opsForSet().difference(key, otherKey);
+    public Set<Object> sDifference(String key, String otherKey) {
+        Set<Object> differenceResult = redisTemplate.opsForSet().difference(key, otherKey);
         if (log.isDebugEnabled()) {
             log.debug("sDifference(...) => key -> {}, otherKey -> {}", key, otherKey);
             log.debug("sDifference(...) => differenceResult -> {}", differenceResult);
@@ -1921,8 +1918,8 @@ public class RedisHelper {
      * @return item差集
      * @since 2020/3/11 14:03:57
      */
-    public Set<String> sDifference(String key, Collection<String> otherKeys) {
-        Set<String> differenceResult = redisTemplate.opsForSet().difference(key, otherKeys);
+    public Set<Object> sDifference(String key, Collection<String> otherKeys) {
+        Set<Object> differenceResult = redisTemplate.opsForSet().difference(key, otherKeys);
         if (log.isDebugEnabled()) {
             log.debug("sDifference(...) => key -> {}, otherKeys -> {}", key, otherKeys);
             log.debug("sDifference(...) => differenceResult -> {}", differenceResult);
@@ -1993,8 +1990,8 @@ public class RedisHelper {
      * @return (key对应的)set
      * @since 2020/3/11 14:49:39
      */
-    public Set<String> sMembers(String key) {
-        Set<String> members = redisTemplate.opsForSet().members(key);
+    public Set<Object> sMembers(String key) {
+        Set<Object> members = redisTemplate.opsForSet().members(key);
         if (log.isDebugEnabled()) {
             log.debug("sMembers(...) => key -> {}", key);
             log.debug("sMembers(...) => members -> {}", members);
@@ -2009,8 +2006,8 @@ public class RedisHelper {
      * @return 随机获取到的项
      * @since 2020/3/11 14:54:58
      */
-    public String sRandomMember(String key) {
-        String randomItem = redisTemplate.opsForSet().randomMember(key);
+    public Object sRandomMember(String key) {
+        Object randomItem = redisTemplate.opsForSet().randomMember(key);
         if (log.isDebugEnabled()) {
             log.debug("sRandomMember(...) => key -> {}", key);
             log.debug("sRandomMember(...) => randomItem -> {}", randomItem);
@@ -2029,8 +2026,8 @@ public class RedisHelper {
      * @return 随机获取到的项集
      * @since 2020/3/11 14:54:58
      */
-    public List<String> sRandomMembers(String key, long count) {
-        List<String> randomItems = redisTemplate.opsForSet().randomMembers(key, count);
+    public List<Object> sRandomMembers(String key, long count) {
+        List<Object> randomItems = redisTemplate.opsForSet().randomMembers(key, count);
         if (log.isDebugEnabled()) {
             log.debug("sRandomMembers(...) => key -> {}, count -> {}", key, count);
             log.debug("sRandomMembers(...) => randomItems -> {}", randomItems);
@@ -2049,8 +2046,8 @@ public class RedisHelper {
      * @return 随机获取到的项集
      * @since 2020/3/11 14:54:58
      */
-    public Set<String> sDistinctRandomMembers(String key, long count) {
-        Set<String> distinctRandomItems = redisTemplate.opsForSet().distinctRandomMembers(key, count);
+    public Set<Object> sDistinctRandomMembers(String key, long count) {
+        Set<Object> distinctRandomItems = redisTemplate.opsForSet().distinctRandomMembers(key, count);
         if (log.isDebugEnabled()) {
             log.debug("sDistinctRandomMembers(...) => key -> {}, count -> {}", key, count);
             log.debug("sDistinctRandomMembers(...) => distinctRandomItems -> {}", distinctRandomItems);
@@ -2077,8 +2074,8 @@ public class RedisHelper {
      * @return 匹配到的(key对应的)set中的项
      * @since 2020/3/9 10:49:27
      */
-    public Cursor<String> sScan(String key, ScanOptions options) {
-        Cursor<String> cursor = redisTemplate.opsForSet().scan(key, options);
+    public Cursor<Object> sScan(String key, ScanOptions options) {
+        Cursor<Object> cursor = redisTemplate.opsForSet().scan(key, options);
         if (log.isDebugEnabled()) {
             log.debug("sScan(...) => key -> {}, options -> {}", key, JSON.toJSONString(options));
             log.debug("sScan(...) => cursor -> {}", JSON.toJSONString(cursor));
@@ -2141,7 +2138,7 @@ public class RedisHelper {
      * @return 本次添加进(key对应的)zset中的entry的个数
      * @since 2020/3/11 16:45:45
      */
-    public long zAdd(String key, Set<ZSetOperations.TypedTuple<String>> entries) {
+    public long zAdd(String key, Set<ZSetOperations.TypedTuple<Object>> entries) {
         Long count = redisTemplate.opsForZSet().add(key, entries);
         if (log.isDebugEnabled()) {
             log.debug("zAdd(...) => key -> {}, entries -> {}", key, JSON.toJSONString(entries));
@@ -2326,8 +2323,8 @@ public class RedisHelper {
      * @return 对应的item项集
      * @since 2020/3/12 9:50:40
      */
-    public Set<String> zRange(String key, long start, long end) {
-        Set<String> result = redisTemplate.opsForZSet().range(key, start, end);
+    public Set<Object> zRange(String key, long start, long end) {
+        Set<Object> result = redisTemplate.opsForZSet().range(key, start, end);
         if (log.isDebugEnabled()) {
             log.debug("zRange(...) => key -> {}, start -> {}, end -> {}", key, start, end);
             log.debug("zRange(...) => result -> {}", result);
@@ -2343,8 +2340,8 @@ public class RedisHelper {
      * @see #zRange(String, long, long)
      * @since 2020/3/12 10:02:07
      */
-    public Set<String> zWholeZSetItem(String key) {
-        Set<String> result = redisTemplate.opsForZSet().range(key, 0, -1);
+    public Set<Object> zWholeZSetItem(String key) {
+        Set<Object> result = redisTemplate.opsForZSet().range(key, 0, -1);
         if (log.isDebugEnabled()) {
             log.debug("zWholeZSetItem(...) => key -> {}", key);
             log.debug("zWholeZSetItem(...) => result -> {}", result);
@@ -2373,8 +2370,8 @@ public class RedisHelper {
      * @return 对应的entry集
      * @since 2020/3/12 9:50:40
      */
-    public Set<ZSetOperations.TypedTuple<String>> zRangeWithScores(String key, long start, long end) {
-        Set<ZSetOperations.TypedTuple<String>> entries = redisTemplate.opsForZSet().rangeWithScores(key, start, end);
+    public Set<ZSetOperations.TypedTuple<Object>> zRangeWithScores(String key, long start, long end) {
+        Set<ZSetOperations.TypedTuple<Object>> entries = redisTemplate.opsForZSet().rangeWithScores(key, start, end);
         if (log.isDebugEnabled()) {
             log.debug("zRangeWithScores(...) => key -> {}, start -> {}, end -> {}", key, start, end);
             log.debug("zRangeWithScores(...) => entries -> {}", JSON.toJSONString(entries));
@@ -2390,8 +2387,8 @@ public class RedisHelper {
      * @see #zRangeWithScores(String, long, long)
      * @since 2020/3/12 10:02:07
      */
-    public Set<ZSetOperations.TypedTuple<String>> zWholeZSetEntry(String key) {
-        Set<ZSetOperations.TypedTuple<String>> entries = redisTemplate.opsForZSet().rangeWithScores(key, 0, -1);
+    public Set<ZSetOperations.TypedTuple<Object>> zWholeZSetEntry(String key) {
+        Set<ZSetOperations.TypedTuple<Object>> entries = redisTemplate.opsForZSet().rangeWithScores(key, 0, -1);
         if (log.isDebugEnabled()) {
             log.debug("zWholeZSetEntry(...) => key -> {}", key);
             log.debug("zWholeZSetEntry(...) => entries -> {}", JSON.toJSONString(entries));
@@ -2416,8 +2413,8 @@ public class RedisHelper {
      * @return 对应的item项集
      * @since 2020/3/12 9:50:40
      */
-    public Set<String> zRangeByScore(String key, double minScore, double maxScore) {
-        Set<String> items = redisTemplate.opsForZSet().rangeByScore(key, minScore, maxScore);
+    public Set<Object> zRangeByScore(String key, double minScore, double maxScore) {
+        Set<Object> items = redisTemplate.opsForZSet().rangeByScore(key, minScore, maxScore);
         if (log.isDebugEnabled()) {
             log.debug("zRangeByScore(...) => key -> {}, minScore -> {}, maxScore -> {}", key, minScore, maxScore);
             log.debug("zRangeByScore(...) => items -> {}", items);
@@ -2446,8 +2443,8 @@ public class RedisHelper {
      * @return 对应的item项集
      * @since 2020/3/12 9:50:40
      */
-    public Set<String> zRangeByScore(String key, double minScore, double maxScore, long offset, long count) {
-        Set<String> items = redisTemplate.opsForZSet().rangeByScore(key, minScore, maxScore, offset, count);
+    public Set<Object> zRangeByScore(String key, double minScore, double maxScore, long offset, long count) {
+        Set<Object> items = redisTemplate.opsForZSet().rangeByScore(key, minScore, maxScore, offset, count);
         if (log.isDebugEnabled()) {
             log.debug("zRangeByScore(...) => key -> {}, minScore -> {}, maxScore -> {}, offset -> {}, " + "count -> {}", key, minScore, maxScore, offset, count);
             log.debug("zRangeByScore(...) => items -> {}", items);
@@ -2468,8 +2465,8 @@ public class RedisHelper {
      * 注: 当[minScore, maxScore]的范围比实际zset中score的范围大时, 返回范围上"交集"对应的项集合。
      * @since 2020/3/12 10:02:07
      */
-    public Set<ZSetOperations.TypedTuple<String>> zRangeByScoreWithScores(String key, double minScore, double maxScore) {
-        Set<ZSetOperations.TypedTuple<String>> entries = redisTemplate.opsForZSet().rangeByScoreWithScores(key, minScore, maxScore);
+    public Set<ZSetOperations.TypedTuple<Object>> zRangeByScoreWithScores(String key, double minScore, double maxScore) {
+        Set<ZSetOperations.TypedTuple<Object>> entries = redisTemplate.opsForZSet().rangeByScoreWithScores(key, minScore, maxScore);
         if (log.isDebugEnabled()) {
             log.debug("zRangeByScoreWithScores(...) => key -> {}, minScore -> {}, maxScore -> {}", key, minScore, maxScore);
             log.debug("zRangeByScoreWithScores(...) => entries -> {}", JSON.toJSONString(entries));
@@ -2490,8 +2487,8 @@ public class RedisHelper {
      * @return [startIndex, endIndex] & [minScore, maxScore]里的entry
      * @since 2020/3/12 11:09:06
      */
-    public Set<ZSetOperations.TypedTuple<String>> zRangeByScoreWithScores(String key, double minScore, double maxScore, long offset, long count) {
-        Set<ZSetOperations.TypedTuple<String>> entries = redisTemplate.opsForZSet().rangeByScoreWithScores(key, minScore, maxScore, offset, count);
+    public Set<ZSetOperations.TypedTuple<Object>> zRangeByScoreWithScores(String key, double minScore, double maxScore, long offset, long count) {
+        Set<ZSetOperations.TypedTuple<Object>> entries = redisTemplate.opsForZSet().rangeByScoreWithScores(key, minScore, maxScore, offset, count);
         if (log.isDebugEnabled()) {
             log.debug("zRangeByScoreWithScores(...) => key -> {}, minScore -> {}, maxScore -> {}," + " offset -> {}, count -> {}", key, minScore, maxScore, offset, count);
             log.debug("zRangeByScoreWithScores(...) => entries -> {}", JSON.toJSONString(entries));
@@ -2504,8 +2501,8 @@ public class RedisHelper {
      *
      * @see #zRange(String, long, long)。 只是zReverseRange这里会提前多一个倒序。
      */
-    public Set<String> zReverseRange(String key, long start, long end) {
-        Set<String> entries = redisTemplate.opsForZSet().reverseRange(key, start, end);
+    public Set<Object> zReverseRange(String key, long start, long end) {
+        Set<Object> entries = redisTemplate.opsForZSet().reverseRange(key, start, end);
         if (log.isDebugEnabled()) {
             log.debug("zReverseRange(...) => key -> {}, start -> {}, end -> {}", key, start, end);
             log.debug("zReverseRange(...) => entries -> {}", entries);
@@ -2518,8 +2515,8 @@ public class RedisHelper {
      *
      * @see #zRangeWithScores(String, long, long)。 只是zReverseRangeWithScores这里会提前多一个倒序。
      */
-    public Set<ZSetOperations.TypedTuple<String>> zReverseRangeWithScores(String key, long start, long end) {
-        Set<ZSetOperations.TypedTuple<String>> entries = redisTemplate.opsForZSet().reverseRangeWithScores(key, start, end);
+    public Set<ZSetOperations.TypedTuple<Object>> zReverseRangeWithScores(String key, long start, long end) {
+        Set<ZSetOperations.TypedTuple<Object>> entries = redisTemplate.opsForZSet().reverseRangeWithScores(key, start, end);
         if (log.isDebugEnabled()) {
             log.debug("zReverseRangeWithScores(...) => key -> {}, start -> {}, end -> {}", key, start, end);
             log.debug("zReverseRangeWithScores(...) => entries -> {}", JSON.toJSONString(entries));
@@ -2532,8 +2529,8 @@ public class RedisHelper {
      *
      * @see #zRangeByScore(String, double, double)。 只是zReverseRangeByScore这里会提前多一个倒序。
      */
-    public Set<String> zReverseRangeByScore(String key, double minScore, double maxScore) {
-        Set<String> items = redisTemplate.opsForZSet().reverseRangeByScore(key, minScore, maxScore);
+    public Set<Object> zReverseRangeByScore(String key, double minScore, double maxScore) {
+        Set<Object> items = redisTemplate.opsForZSet().reverseRangeByScore(key, minScore, maxScore);
         if (log.isDebugEnabled()) {
             log.debug("zReverseRangeByScore(...) => key -> {}, minScore -> {}, maxScore -> {}", key, minScore, maxScore);
             log.debug("zReverseRangeByScore(...) => items -> {}", items);
@@ -2546,8 +2543,8 @@ public class RedisHelper {
      *
      * @see #zRangeByScoreWithScores(String, double, double)。 只是zReverseRangeByScoreWithScores这里会提前多一个倒序。
      */
-    public Set<ZSetOperations.TypedTuple<String>> zReverseRangeByScoreWithScores(String key, double minScore, double maxScore) {
-        Set<ZSetOperations.TypedTuple<String>> entries = redisTemplate.opsForZSet().reverseRangeByScoreWithScores(key, minScore, maxScore);
+    public Set<ZSetOperations.TypedTuple<Object>> zReverseRangeByScoreWithScores(String key, double minScore, double maxScore) {
+        Set<ZSetOperations.TypedTuple<Object>> entries = redisTemplate.opsForZSet().reverseRangeByScoreWithScores(key, minScore, maxScore);
         if (log.isDebugEnabled()) {
             log.debug("zReverseRangeByScoreWithScores(...) => key -> {}, minScore -> {}, maxScore -> {}", key, minScore, maxScore);
             log.debug("zReverseRangeByScoreWithScores(...) => entries -> {}", JSON.toJSONString(entries));
@@ -2561,8 +2558,8 @@ public class RedisHelper {
      *
      * @see #zRangeByScore(String, double, double, long, long)。 只是zReverseRangeByScore这里会提前多一个倒序。
      */
-    public Set<String> zReverseRangeByScore(String key, double minScore, double maxScore, long offset, long count) {
-        Set<String> items = redisTemplate.opsForZSet().reverseRangeByScore(key, minScore, maxScore, offset, count);
+    public Set<Object> zReverseRangeByScore(String key, double minScore, double maxScore, long offset, long count) {
+        Set<Object> items = redisTemplate.opsForZSet().reverseRangeByScore(key, minScore, maxScore, offset, count);
         if (log.isDebugEnabled()) {
             log.debug("zReverseRangeByScore(...) => key -> {}, minScore -> {}, maxScore -> {}, offset -> {}, " + "count -> {}", key, minScore, maxScore, offset, count);
             log.debug("items -> {}", items);

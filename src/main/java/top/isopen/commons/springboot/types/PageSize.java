@@ -13,9 +13,13 @@ public class PageSize extends ValueType<Integer> {
 
     public PageSize(Integer value) {
         super(value);
-        if (value == null || value < 1 || value > 100) {
+        if (value == null || value < 0 || value > 100) {
             BaseErrorEnum.INVALID_PAGE_SIZE_ERROR.throwException();
         }
+    }
+
+    public PageSize(ValueType<Integer> type) {
+        this(type.getValue());
     }
 
 }

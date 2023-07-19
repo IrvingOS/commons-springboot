@@ -18,4 +18,8 @@ public class PrimaryId extends ValueType<Long> {
         }
     }
 
+    public PrimaryId(ValueType<Long> type) {
+        this(type.getValue());
+    }
+
 }

@@ -18,4 +18,8 @@ public class PageCurrent extends ValueType<Integer> {
         }
     }
 
+    public PageCurrent(ValueType<Integer> type) {
+        this(type.getValue());
+    }
+
 }
