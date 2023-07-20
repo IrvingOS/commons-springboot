@@ -6,6 +6,9 @@ import top.isopen.commons.springboot.repository.support.SFunction;
 import top.isopen.commons.springboot.util.FieldUtil;
 import top.isopen.commons.springboot.util.NameUtil;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * 条件查询类型
  *
@@ -21,6 +24,7 @@ public class Query<T> {
     private SFunction<T, ?> columnFunc;
     private Column column;
     private Object value;
+    private List<Query<T>> subQuery;
 
     public static <T> Builder<T> builder() {
         return new Builder<>();
@@ -31,6 +35,7 @@ public class Query<T> {
                 .type(QueryTypeEnum.resolve(queryRequest.getType()))
                 .column(queryRequest.getColumn())
                 .value(queryRequest.getValue())
+                .subQuery(queryRequest.getSubQuery() != null ? queryRequest.getSubQuery().stream().map(Query::<T>resolve).collect(Collectors.toList()) : null)
                 .build();
     }
 
@@ -46,13 +51,18 @@ public class Query<T> {
         return value;
     }
 
+    public List<Query<T>> getSubQuery() {
+        return subQuery;
+    }
+
     @Override
     public String toString() {
         return "Query{" +
                 "type=" + type +
                 ", columnFunc=" + columnFunc +
-                ", column='" + column.getValue() + '\'' +
+                ", column=" + column +
                 ", value=" + value +
+                ", subQuery=" + subQuery +
                 '}';
     }
 
@@ -86,6 +96,11 @@ public class Query<T> {
 
         public Builder<T> value(Object value) {
             query.value = value;
+            return this;
+        }
+
+        public Builder<T> subQuery(List<Query<T>> subQuery) {
+            query.subQuery = subQuery;
             return this;
         }
 

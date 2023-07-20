@@ -43,3 +43,4 @@ mybatis-plus:
 logging:
   level:
     top.isopen.commons.springboot.test.dao: debug
+    top.isopen.commons.springboot.repository: debug

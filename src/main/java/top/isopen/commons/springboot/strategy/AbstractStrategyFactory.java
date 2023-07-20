@@ -1,4 +1,4 @@
-package top.isopen.commons.springboot.factory;
+package top.isopen.commons.springboot.strategy;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -126,6 +126,7 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
                         .type(query.getType())
                         .column(query.getColumn())
                         .value(query.getValue())
+                        .subQuery(transformQueryList(query.getSubQuery()))
                         .build()) : null;
         List<OrderBy<R>> transformedOrderByList = orderByList != null ? TypeUtil.transform(orderByList.getValue(),
                 orderBy -> OrderBy.<R>builder().asc(orderBy.isAsc(), orderBy.getColumn()).build()) :
@@ -134,13 +135,31 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
         return this.queryWrapper(transformedQueryList, transformedOrderByList);
     }
 
+    private List<Query<R>> transformQueryList(List<Query<T>> queryList) {
+        if (queryList == null) {
+            return null;
+        }
+        return TypeUtil.transform(queryList, query -> Query.<R>builder()
+                .type(query.getType())
+                .column(query.getColumn())
+                .value(query.getValue())
+                .subQuery(query.getSubQuery() != null ? transformQueryList(query.getSubQuery()) : null)
+                .build());
+    }
+
     private LambdaQueryWrapper<R> queryWrapper(List<Query<R>> queryList, List<OrderBy<R>> orderByList) {
         QueryWrapper<R> queryWrapper = new QueryWrapper<>();
 
         if (queryList != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("query: {}", queryList);
+            }
             fillQuery(queryWrapper, queryList);
         }
         if (orderByList != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("order by: {}", orderByList);
+            }
             fillOrderBy(queryWrapper, orderByList);
         }
 
@@ -184,10 +203,7 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
             QueryTypeEnum queryType = queryEntity.getType();
             String column = escapeColumn(queryEntity.getColumn());
             Object value = queryEntity.getValue();
-
-            if (log.isDebugEnabled()) {
-                log.debug("query type: {}, column: {}, value: {}", queryType, column, value);
-            }
+            List<Query<R>> subQuery = queryEntity.getSubQuery();
 
             if (queryType == QueryTypeEnum.EQ) {
                 queryWrapper.eq(column, value);
@@ -195,6 +211,8 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
                 queryWrapper.like(column, value);
             } else if (queryType == QueryTypeEnum.OR) {
                 queryWrapper.or();
+            } else if (queryType == QueryTypeEnum.AND) {
+                queryWrapper.and(x -> fillQuery(x, subQuery));
             } else if (queryType == QueryTypeEnum.NE) {
                 queryWrapper.ne(column, value);
             } else if (queryType == QueryTypeEnum.LE) {
@@ -216,11 +234,6 @@ public abstract class AbstractRepository<T extends AbstractType<T, ?>, R extends
     private void fillOrderBy(QueryWrapper<R> queryWrapper, List<OrderBy<R>> orderByList) {
         orderByList.sort(Comparator.comparingInt(OrderBy::getOrder));
         for (OrderBy<R> orderBy : orderByList) {
-
-            if (log.isDebugEnabled()) {
-                log.debug("order by column: {} {}, order: {}", orderBy.getColumn(), orderBy.isAsc(), orderBy.getOrder());
-            }
-
             queryWrapper.orderBy(true, orderBy.isAsc(), escapeColumn(orderBy.getColumn()));
         }
     }

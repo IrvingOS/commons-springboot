@@ -20,7 +20,7 @@
         <dependency>
             <groupId>top.isopen.commons</groupId>
             <artifactId>commons-springboot</artifactId>
-            <version>1.2.1</version>
+            <version>1.2.2</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

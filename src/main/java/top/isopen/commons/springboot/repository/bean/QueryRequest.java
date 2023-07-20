@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import top.isopen.commons.springboot.bean.BaseRequest;
 
+import java.util.List;
+
 /**
  * 复杂查询请求
  *
@@ -41,5 +43,11 @@ public class QueryRequest extends BaseRequest {
      * @since 2023/7/7 16:52
      */
     private Object value;
+    /**
+     * 子查询
+     *
+     * @since 2023/7/20 11:12
+     */
+    private List<QueryRequest> subQuery;
 
 }
