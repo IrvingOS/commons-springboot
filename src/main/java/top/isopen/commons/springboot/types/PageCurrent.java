@@ -13,7 +13,7 @@ public class PageCurrent extends ValueType<Integer> {
 
     public PageCurrent(Integer value) {
         super(value);
-        if (value == null || value < 1) {
+        if (value == null || value < 0) {
             BaseErrorEnum.INVALID_PAGE_CURRENT_ERROR.throwException();
         }
     }
