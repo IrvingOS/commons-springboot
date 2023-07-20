@@ -12,10 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import top.isopen.commons.springboot.helper.ApplicationContextHelper;
 import top.isopen.commons.springboot.helper.RedisHelper;
 import top.isopen.commons.springboot.lock.RedLockAspect;
 import top.isopen.commons.springboot.lock.RedLocksAspect;
@@ -34,8 +32,8 @@ public class RedisConfig {
 
     @Bean
     @ConditionalOnBean({RedisConnectionFactory.class})
-    @ConditionalOnMissingBean({RedisTemplate.class})
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+    @ConditionalOnMissingBean(name = "serializedRedisTemplate")
+    public RedisTemplate<String, Object> serializedRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
 
@@ -57,11 +55,10 @@ public class RedisConfig {
     }
 
     @Bean
-    @ConditionalOnBean({RedisTemplate.class})
+    @ConditionalOnBean(name = "serializedRedisTemplate")
     @ConditionalOnMissingBean({RedisHelper.class})
-    public RedisHelper redisHelper(ApplicationContextHelper applicationContextHelper) {
-        RedisTemplate<String, Object> redisTemplate = applicationContextHelper.getBean(RedisTemplate.class);
-        return new RedisHelper(redisTemplate);
+    public RedisHelper redisHelper(RedisTemplate<String, Object> serializedRedisTemplate) {
+        return new RedisHelper(serializedRedisTemplate);
     }
 
     @Bean

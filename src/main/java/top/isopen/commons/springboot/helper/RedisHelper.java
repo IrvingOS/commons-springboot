@@ -6,7 +6,10 @@ import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.connection.ReturnType;
-import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.types.Expiration;
 import top.isopen.commons.logging.Log;
 import top.isopen.commons.logging.LogFactory;
@@ -421,7 +424,7 @@ public class RedisHelper {
      * @param value key 对应的 value
      * @since 2020/3/8 15:40:59
      */
-    public void set(String key, String value) {
+    public void set(String key, Object value) {
         if (log.isDebugEnabled()) {
             log.debug("set(...) => key -> {}, value -> {}", key, value);
         }
@@ -473,7 +476,7 @@ public class RedisHelper {
      * @param unit       timeToLive 的单位
      * @since 2020/3/8 15:40:59
      */
-    public void setEx(String key, String value, long timeToLive, TimeUnit unit) {
+    public void setEx(String key, Object value, long timeToLive, TimeUnit unit) {
         if (log.isDebugEnabled()) {
             log.debug("setEx(...) => key -> {}, value -> {}, timeToLive -> {}, unit -> {}", key, value, timeToLive, unit);
         }
@@ -489,7 +492,7 @@ public class RedisHelper {
      * @return set 是否成功
      * @since 2020/3/8 16:51:36
      */
-    public boolean setIfAbsent(String key, String value) {
+    public boolean setIfAbsent(String key, Object value) {
         Boolean result = redisTemplate.opsForValue().setIfAbsent(key, value);
         if (log.isDebugEnabled()) {
             log.debug("setIfAbsent(...) => key -> {}, value -> {}", key, value);
@@ -512,7 +515,7 @@ public class RedisHelper {
      * @return set 是否成功
      * @since 2020/3/8 16:51:36
      */
-    public boolean setIfAbsent(String key, String value, long timeToLive, TimeUnit unit) {
+    public boolean setIfAbsent(String key, Object value, long timeToLive, TimeUnit unit) {
         Boolean result = redisTemplate.opsForValue().setIfAbsent(key, value, timeToLive, unit);
         if (log.isDebugEnabled()) {
             log.debug("setIfAbsent(...) => key -> {}, value -> {}, timeToLive -> {}, unit -> {}", key, value, timeToLive, unit);
@@ -581,7 +584,7 @@ public class RedisHelper {
      * @param maps key-value 集
      * @since 2020/3/8 17:21:19
      */
-    public void multiSet(Map<String, String> maps) {
+    public void multiSet(Map<String, Object> maps) {
         if (log.isDebugEnabled()) {
             log.debug("multiSet(...) => maps -> {}", maps);
         }
@@ -602,7 +605,7 @@ public class RedisHelper {
      * @return 操作是否成功
      * @since 2020/3/8 17:21:19
      */
-    public boolean multiSetIfAbsent(Map<String, String> maps) {
+    public boolean multiSetIfAbsent(Map<String, Object> maps) {
         Boolean result = redisTemplate.opsForValue().multiSetIfAbsent(maps);
         if (log.isDebugEnabled()) {
             log.debug("multiSetIfAbsent(...) => maps -> {}", maps);
@@ -675,7 +678,7 @@ public class RedisHelper {
     /**
      * 追加值到末尾
      * <p>
-     * 注: 当 redis 中原本不存在 key 时，那么（从效果上来看）此方法就等价于 {@link #set(String, String)}
+     * 注: 当 redis 中原本不存在 key 时，那么（从效果上来看）此方法就等价于 {@link #set(String, Object)}
      *
      * @param key   定位 value 的 key
      * @param value 要追加的 value 值
@@ -743,7 +746,7 @@ public class RedisHelper {
      * @return 旧的 value 值
      * @since 2020/3/8 18:14:24
      */
-    public Object getAndSet(String key, String newValue) {
+    public Object getAndSet(String key, Object newValue) {
         Object oldValue = redisTemplate.opsForValue().getAndSet(key, newValue);
         if (log.isDebugEnabled()) {
             log.debug("getAndSet(...) => key -> {}, value -> {}", key, newValue);
@@ -810,7 +813,7 @@ public class RedisHelper {
      * @param entryValue 要向 hash 中增加的键值对里的值
      * @since 2020/3/8 23:49:52
      */
-    public void hPut(String key, String entryKey, String entryValue) {
+    public void hPut(String key, String entryKey, Object entryValue) {
         if (log.isDebugEnabled()) {
             log.debug("hPut(...) => key -> {}, entryKey -> {}, entryValue -> {}", key, entryKey, entryValue);
         }
@@ -827,7 +830,7 @@ public class RedisHelper {
      * @param maps 要向 hash 中增加的键值对集
      * @since 2020/3/8 23:49:52
      */
-    public void hPutAll(String key, Map<String, String> maps) {
+    public void hPutAll(String key, Map<String, Object> maps) {
         if (log.isDebugEnabled()) {
             log.debug("hPutAll(...) => key -> {}, maps -> {}", key, maps);
         }
@@ -844,7 +847,7 @@ public class RedisHelper {
      * @return 操作是否成功。
      * @since 2020/3/8 23:49:52
      */
-    public boolean hPutIfAbsent(String key, String entryKey, String entryValue) {
+    public boolean hPutIfAbsent(String key, String entryKey, Object entryValue) {
         Boolean result = redisTemplate.opsForHash().putIfAbsent(key, entryKey, entryValue);
         if (log.isDebugEnabled()) {
             log.debug("hPutIfAbsent(...) => key -> {}, entryKey -> {}, entryValue -> {}", key, entryKey, entryValue);
@@ -1109,15 +1112,15 @@ public class RedisHelper {
      * <p>
      * 注: 若redis中不存在对应的key, 那么会自动创建
      *
-     * @param key  定位list的key
-     * @param item 要推入list的元素
+     * @param key   定位list的key
+     * @param value 要推入list的元素
      * @return 推入后，(key对应的)list的size
      * @since 2020/3/9 11:56:05
      */
-    public long lLeftPush(String key, String item) {
-        Long size = redisTemplate.opsForList().leftPush(key, item);
+    public long lLeftPush(String key, Object value) {
+        Long size = redisTemplate.opsForList().leftPush(key, value);
         if (log.isDebugEnabled()) {
-            log.debug("lLeftPush(...) => key -> {}, item -> {}", key, item);
+            log.debug("lLeftPush(...) => key -> {}, item -> {}", key, value);
             log.debug("lLeftPush(...) => size -> {}", size);
         }
         if (size == null) {
@@ -1137,7 +1140,7 @@ public class RedisHelper {
      * @return 推入后，(key对应的)list的size
      * @since 2020/3/9 11:56:05
      */
-    public long lLeftPushAll(String key, String... items) {
+    public long lLeftPushAll(String key, Object... items) {
         Long size = redisTemplate.opsForList().leftPushAll(key, items);
         if (log.isDebugEnabled()) {
             log.debug("lLeftPushAll(...) => key -> {}, items -> {}", key, items);
@@ -1160,7 +1163,7 @@ public class RedisHelper {
      * @return 推入后，(key对应的)list的size
      * @since 2020/3/9 11:56:05
      */
-    public long lLeftPushAll(String key, Collection<String> items) {
+    public long lLeftPushAll(String key, Collection<Object> items) {
         Long size = redisTemplate.opsForList().leftPushAll(key, items);
         if (log.isDebugEnabled()) {
             log.debug("lLeftPushAll(...) => key -> {}, items -> {}", key, items);
@@ -1181,7 +1184,7 @@ public class RedisHelper {
      * @return 推入后，(key对应的)list的size
      * @since 2020/3/9 13:40:08
      */
-    public long lLeftPushIfPresent(String key, String item) {
+    public long lLeftPushIfPresent(String key, Object item) {
         Long size = redisTemplate.opsForList().leftPushIfPresent(key, item);
         if (log.isDebugEnabled()) {
             log.debug("lLeftPushIfPresent(...) => key -> {}, item -> {}", key, item);
@@ -1204,7 +1207,7 @@ public class RedisHelper {
      * @return 推入后，(key对应的)list的size
      * @since 2020/3/9 11:56:05
      */
-    public long lLeftPush(String key, String pivot, String item) {
+    public long lLeftPush(String key, String pivot, Object item) {
         Long size = redisTemplate.opsForList().leftPush(key, pivot, item);
         if (log.isDebugEnabled()) {
             log.debug("lLeftPush(...) => key -> {}, pivot -> {}, item -> {}", key, pivot, item);
@@ -1217,9 +1220,9 @@ public class RedisHelper {
     }
 
     /**
-     * 与{@link #lLeftPush(String, String)}类比即可， 不过是从list右侧推入元素
+     * 与{@link #lLeftPush(String, Object)}类比即可， 不过是从list右侧推入元素
      */
-    public long lRightPush(String key, String item) {
+    public long lRightPush(String key, Object item) {
         Long size = redisTemplate.opsForList().rightPush(key, item);
         if (log.isDebugEnabled()) {
             log.debug("lRightPush(...) => key -> {}, item -> {}", key, item);
@@ -1232,9 +1235,9 @@ public class RedisHelper {
     }
 
     /**
-     * 与{@link #lLeftPushAll(String, String...)}类比即可， 不过是从list右侧推入元素
+     * 与{@link #lLeftPushAll(String, Object...)}类比即可， 不过是从list右侧推入元素
      */
-    public long lRightPushAll(String key, String... items) {
+    public long lRightPushAll(String key, Object... items) {
         Long size = redisTemplate.opsForList().rightPushAll(key, items);
         if (log.isDebugEnabled()) {
             log.debug("lRightPushAll(...) => key -> {}, items -> {}", key, items);
@@ -1247,9 +1250,9 @@ public class RedisHelper {
     }
 
     /**
-     * 与{@link #lLeftPushAll(String, Collection<String>)}类比即可， 不过是从list右侧推入元素
+     * 与{@link #lLeftPushAll(String, Collection<Object>)}类比即可， 不过是从list右侧推入元素
      */
-    public long lRightPushAll(String key, Collection<String> items) {
+    public long lRightPushAll(String key, Collection<Object> items) {
         Long size = redisTemplate.opsForList().rightPushAll(key, items);
         if (log.isDebugEnabled()) {
             log.debug("lRightPushAll(...) => key -> {}, items -> {}", key, items);
@@ -1262,9 +1265,9 @@ public class RedisHelper {
     }
 
     /**
-     * 与{@link #lLeftPushIfPresent(String, String)}类比即可， 不过是从list右侧推入元素
+     * 与{@link #lLeftPushIfPresent(String, Object)}类比即可， 不过是从list右侧推入元素
      */
-    public long lRightPushIfPresent(String key, String item) {
+    public long lRightPushIfPresent(String key, Object item) {
         Long size = redisTemplate.opsForList().rightPushIfPresent(key, item);
         if (log.isDebugEnabled()) {
             log.debug("lRightPushIfPresent(...) => key -> {}, item -> {}", key, item);
@@ -1277,9 +1280,9 @@ public class RedisHelper {
     }
 
     /**
-     * 与{@link #lLeftPush(String, String, String)}类比即可， 不过是从list右侧推入元素
+     * 与{@link #lLeftPush(String, String, Object)}类比即可， 不过是从list右侧推入元素
      */
-    public long lRightPush(String key, String pivot, String item) {
+    public long lRightPush(String key, String pivot, Object item) {
         Long size = redisTemplate.opsForList().rightPush(key, pivot, item);
         if (log.isDebugEnabled()) {
             log.debug("lLeftPush(...) => key -> {}, pivot -> {}, item -> {}", key, pivot, item);
@@ -1422,7 +1425,7 @@ public class RedisHelper {
      * @param item  要替换成的值
      * @since 2020/3/9 15:39:50
      */
-    public void lSet(String key, long index, String item) {
+    public void lSet(String key, long index, Object item) {
         if (log.isDebugEnabled()) {
             log.debug("lSet(...) => key -> {}, index -> {}, item -> {}", key, index, item);
         }
@@ -1527,7 +1530,7 @@ public class RedisHelper {
      * @return 实际删除了的item的个数
      * @since 2020/3/10 0:52:57
      */
-    public long lRemove(String key, long expectCount, String item) {
+    public long lRemove(String key, long expectCount, Object item) {
         Long actualCount = redisTemplate.opsForList().remove(key, expectCount, item);
         if (log.isDebugEnabled()) {
             log.debug("lRemove(...) => key -> {}, expectCount -> {}, item -> {}", key, expectCount, item);
@@ -1578,7 +1581,7 @@ public class RedisHelper {
      * @return 此次添加操作, 添加到set中的元素的个数
      * @since 2020/3/11 8:16:00
      */
-    public long sAdd(String key, String... items) {
+    public long sAdd(String key, Object... items) {
         Long count = redisTemplate.opsForSet().add(key, items);
         if (log.isDebugEnabled()) {
             log.debug("sAdd(...) => key -> {}, items -> {}", key, items);
@@ -1648,7 +1651,7 @@ public class RedisHelper {
      * @return 移动成功与否
      * @since 2020/3/11 8:43:32
      */
-    public boolean sMove(String sourceKey, String item, String destinationKey) {
+    public boolean sMove(String sourceKey, Object item, String destinationKey) {
         Boolean result = redisTemplate.opsForSet().move(sourceKey, item, destinationKey);
         if (log.isDebugEnabled()) {
             log.debug("sMove(...) => sourceKey -> {}, destinationKey -> {}, item -> {}", sourceKey, destinationKey, item);
@@ -2112,7 +2115,7 @@ public class RedisHelper {
      * @return 是否添加成功
      * @since 2020/3/11 15:35:30
      */
-    public boolean zAdd(String key, String item, double score) {
+    public boolean zAdd(String key, Object item, double score) {
         Boolean result = redisTemplate.opsForZSet().add(key, item, score);
         if (log.isDebugEnabled()) {
             log.debug("zAdd(...) => key -> {}, item -> {}, score -> {}", key, item, score);
@@ -2244,7 +2247,7 @@ public class RedisHelper {
      * @return 修改后的score值
      * @since 2020/3/12 8:55:38
      */
-    public double zIncrementScore(String key, String item, double delta) {
+    public double zIncrementScore(String key, Object item, double delta) {
         Double scoreValue = redisTemplate.opsForZSet().incrementScore(key, item, delta);
         if (log.isDebugEnabled()) {
             log.debug("zIncrementScore(...) => key -> {}, item -> {}, delta -> {}", key, item, delta);

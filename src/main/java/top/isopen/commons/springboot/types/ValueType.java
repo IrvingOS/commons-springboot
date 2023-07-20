@@ -15,12 +15,12 @@ public class ValueType<T> {
         this.value = value;
     }
 
-    protected T getValue() {
-        return this.value;
+    public static <T, R extends ValueType<T>> T resolve(R entity) {
+        return entity != null ? entity.getValue() : null;
     }
 
-    protected static <T, R extends ValueType<T>> T resolve(R entity) {
-        return entity != null ? entity.getValue() : null;
+    public T getValue() {
+        return this.value;
     }
 
 }
