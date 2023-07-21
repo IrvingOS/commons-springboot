@@ -19,8 +19,13 @@ public class ValueType<T> {
         return entity != null ? entity.getValue() : null;
     }
 
-    public T getValue() {
+    public final T getValue() {
         return this.value;
+    }
+
+    @Override
+    public final String toString() {
+        return value.toString();
     }
 
 }
