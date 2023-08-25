@@ -7,6 +7,8 @@ import java.util.concurrent.TimeUnit;
  * 分布式锁注解
  * <p>
  * 负责处理需要同时加锁多个 key 的情况
+ * <p>
+ * 可重入、可 Watch Dog，底层依赖 {@link org.redisson.Redisson}*
  *
  * @author TimeChaser
  * @version 1.0
@@ -41,7 +43,7 @@ public @interface RedLocks {
     /**
      * 加锁的时间（单位 {@link RedLocks#timeUnit()}），超过这个时间后锁便自动解锁；
      * <p>
-     * 如果 leaseTime 为 -1，则保持锁定直到显式解锁
+     * 如果 leaseTime 为 -1，则启用 Watch Dog 机制，先加锁 30 秒，线程存货则续期
      */
     long leaseTime() default -1L;
 

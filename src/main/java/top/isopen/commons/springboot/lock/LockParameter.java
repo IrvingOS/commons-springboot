@@ -40,7 +40,7 @@ public class LockParameter {
     TimeUnit timeUnit;
     long waitTime;
 
-    public LockParameter(RedLock redLock, JoinPoint joinPoint) {
+    LockParameter(RedLock redLock, JoinPoint joinPoint) {
         keys = null;
         parameters = parameterNameDiscoverer.getParameterNames(((MethodSignature) joinPoint.getSignature()).getMethod());
         args = joinPoint.getArgs();
@@ -54,7 +54,7 @@ public class LockParameter {
         key = resolveKey(redLock.key(), parameters, args);
     }
 
-    public LockParameter(RedLocks redLocks, JoinPoint joinPoint) {
+    LockParameter(RedLocks redLocks, JoinPoint joinPoint) {
         key = null;
         parameters = parameterNameDiscoverer.getParameterNames(((MethodSignature) joinPoint.getSignature()).getMethod());
         args = joinPoint.getArgs();
@@ -68,24 +68,54 @@ public class LockParameter {
         keys = resolveKey(redLocks.keys(), parameters, args);
     }
 
-    private static String resolveKey(String str, String[] parameters, Object[] args) {
+    /**
+     * 解析 {@link RedLock#key()}
+     *
+     * @param key        {@link RedLock#key()}
+     * @param parameters 被 {@link RedLock} 注释的方法的参数项
+     * @param args       被 {@link RedLock} 注释的方法的参数值
+     * @return {@link String}
+     * @author TimeChaser
+     * @since 2023/8/25 14:48
+     */
+    private static String resolveKey(String key, String[] parameters, Object[] args) {
         StandardEvaluationContext context = getElContext(parameters, args);
-        return resolveKey(str, context);
+        return resolveKey(key, context);
     }
 
-    private static String[] resolveKey(String[] strings, String[] parameters, Object[] args) {
-        String[] values = new String[strings.length];
+    /**
+     * 解析 {@link RedLocks#keys()}
+     *
+     * @param keys       {@link RedLocks#keys()}
+     * @param parameters 被 {@link RedLocks} 注释的方法的参数项
+     * @param args       被 {@link RedLocks} 注释的方法的参数值
+     * @return String[]
+     * @author TimeChaser
+     * @since 2023/8/25 14:50
+     */
+    private static String[] resolveKey(String[] keys, String[] parameters, Object[] args) {
+        String[] values = new String[keys.length];
         StandardEvaluationContext context = getElContext(parameters, args);
 
-        for (int i = 0; i < strings.length; i++) {
-            values[i] = resolveKey(strings[i], context);
+        for (int i = 0; i < keys.length; i++) {
+            values[i] = resolveKey(keys[i], context);
         }
         return values;
     }
 
-
-    private static String resolveKey(String str, StandardEvaluationContext context) {
-        String[] comb = resolveEl(str);
+    /**
+     * 通过 EL 表达式上下文解析 key
+     * <p>
+     * TODO 当前 {@link RedLock#key()} 中有且只能存在一个 EL 表达式，其实是可以通过递归和 try-catch 的组合优化的
+     *
+     * @param key     锁的 key
+     * @param context EL 上下文
+     * @return {@link String}
+     * @author TimeChaser
+     * @since 2023/8/25 14:51
+     */
+    private static String resolveKey(String key, StandardEvaluationContext context) {
+        String[] comb = resolveEl(key);
         assert comb != null;
         assert comb.length == 3;
         String spEl = comb[1];
@@ -96,14 +126,22 @@ public class LockParameter {
                 + (comb[2].length() != 0 ? KEY_SEPARATOR + comb[2] : "");
     }
 
-    private static String[] resolveEl(String str) {
-        String[] splits = str.split(KEY_SEPARATOR);
+    /**
+     * 解析 key 的 EL 表达式组成部分
+     *
+     * @param el EL 表达式
+     * @return String[]
+     * @author TimeChaser
+     * @since 2023/8/25 14:53
+     */
+    private static String[] resolveEl(String el) {
+        String[] splits = el.split(KEY_SEPARATOR);
         for (int i = 0, n = splits.length; i < n; i++) {
-            String split = splits[i];
-            if (split.charAt(0) == SP_EL_PREFIX) {
+            String target = splits[i];
+            if (target.charAt(0) == SP_EL_PREFIX) {
                 return new String[]{
                         i == 0 ? "" : String.join("", Arrays.copyOfRange(splits, 0, i)),
-                        split,
+                        target,
                         i == n - 1 ? "" : String.join("", Arrays.copyOfRange(splits, i + 1, n))
                 };
             }
@@ -112,6 +150,15 @@ public class LockParameter {
         return null;
     }
 
+    /**
+     * 组装 EL 表达式上下文
+     *
+     * @param parameters 切面方法的参数项
+     * @param args       切面方法的参数值
+     * @return {@link StandardEvaluationContext}
+     * @author TimeChaser
+     * @since 2023/8/25 15:06
+     */
     private static StandardEvaluationContext getElContext(String[] parameters, Object[] args) {
         StandardEvaluationContext context = new StandardEvaluationContext();
         for (int i = 0; i < args.length; i++) {
