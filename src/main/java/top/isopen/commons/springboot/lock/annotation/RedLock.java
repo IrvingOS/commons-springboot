@@ -52,7 +52,9 @@ public @interface RedLock {
     /**
      * 获取锁的最大尝试时间（单位 {@link RedLock#timeUnit()}）
      * <p>
-     * 该值大于 0 则使用 locker.tryLock 方法加锁，否则使用 locker.lock 方法
+     * 该值大于 0 则使用 locker.tryLock 方法加锁，在 waitTime 时间过后仍未加锁成功则抛出异常
+     * <p>
+     * 等于 -1 则使用 locker.lock 方法自旋锁循环加锁，直到加锁成功
      */
     long waitTime() default 500L;
 

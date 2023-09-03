@@ -7,7 +7,7 @@
 <dependency>
     <groupId>top.isopen.commons</groupId>
     <artifactId>commons-springboot</artifactId>
-    <version>1.2.7</version>
+    <version>1.2.8</version>
 </dependency>
 ```
 
