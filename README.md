@@ -3,7 +3,6 @@
 ## 1. 使用
 
 ```xml
-
 <dependency>
     <groupId>top.isopen.commons</groupId>
     <artifactId>commons-springboot</artifactId>
